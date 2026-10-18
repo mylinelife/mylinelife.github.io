@@ -6,13 +6,14 @@ sys.path.insert(0, os.path.dirname(__file__))
 from data_tarot import TAROT
 from data_runes import RUNES
 from data_palm import PALM
+from data_minor import MINOR, SUITS
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SITE = "https://mylinelife.github.io"
 BOT = "https://t.me/mylinelife_bot"
 CHANNEL = "https://t.me/linelife_daily"
 TODAY = "2026-10-18"
-CSS_V = "4"
+CSS_V = "5"
 E = html.escape
 pages = []  # (path, priority, changefreq)
 
@@ -83,7 +84,7 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css?v={CSS_V}">
 {ld(gr) if gr else ""}
 </head>
@@ -101,10 +102,10 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
 </main>
 <footer>
   <nav class="foot-nav" aria-label="Карта сайта">
-    <div><b>Таро</b><a href="/taro/">Значения карт</a><a href="/taro/{TAROT[0]['slug']}/">Шут</a><a href="/taro/smert/">Смерть</a><a href="/taro/bashnya/">Башня</a><a href="/taro/vlyublennye/">Влюблённые</a></div>
+    <div><b>Таро</b><a href="/taro/">Значения карт</a><a href="/taro/{TAROT[0]['slug']}/">Шут</a><a href="/taro/smert/">Смерть</a><a href="/taro/zhezly/">Масть Жезлов</a><a href="/taro/kubki/">Масть Кубков</a><a href="/taro/mechi/">Масть Мечей</a><a href="/taro/pentakli/">Масть Пентаклей</a></div>
     <div><b>Руны</b><a href="/runy/">Значения рун</a><a href="/runy/fehu/">Феху</a><a href="/runy/algiz/">Альгиз</a><a href="/runy/gebo/">Гебо</a><a href="/runy/odin/">Руна Одина</a></div>
     <div><b>Хиромантия</b><a href="/hiromantiya/">Линии на руке</a>{''.join(f'<a href="/hiromantiya/{p["slug"]}/">{p["name"]}</a>' for p in PALM)}</div>
-    <div><b>LineLife</b><a href="{bot('site_footer')}">Бот в Telegram</a><a href="{CHANNEL}">Канал с картой дня</a><a href="/privacy.html">Политика конфиденциальности</a></div>
+    <div><b>LineLife</b><a href="{bot('site_footer')}">Бот в Telegram</a><a href="{CHANNEL}">Канал с картой дня</a><a href="/o-proekte/">О проекте</a><a href="/privacy.html">Политика конфиденциальности</a></div>
   </nav>
   <p class="disc"><span class="age">18+</span> LineLife — развлекательный сервис. Материалы сайта и бота не являются предсказанием, медицинской, психологической, юридической или финансовой консультацией.</p>
   <p class="disc">© 2026 LineLife</p>
@@ -167,26 +168,25 @@ def palm_svg(highlight=None, size_class="palm-svg"):
 
 
 # ---------------- ТАРО ----------------
-def tarot_pages():
-    n = len(TAROT)
-    for i, c in enumerate(TAROT):
-        url = f"/taro/{c['slug']}/"
-        title = f"{c['name']} — значение карты Таро, в любви и перевёрнутая | LineLife"
-        desc = f"Значение карты {c['name']} ({c['num']} аркан Таро): {', '.join(c['kw'][:3])}. Прямое и перевёрнутое положение, любовь, работа, совет и ответ «да или нет»."
-        h1 = f"Карта Таро {c['name']}: значение и толкование"
-        prev = TAROT[(i - 1) % n]; nxt = TAROT[(i + 1) % n]
-        qa = [(f"Что означает карта {c['name']} в Таро?", c["general"]),
-              (f"Что значит перевёрнутая карта {c['name']}?", c["reversed"]),
-              (f"Что означает {c['name']} в любви и отношениях?", c["love"]),
-              (f"{c['name']}: да или нет?", f"В раскладе «да или нет» карта {c['name']} обычно трактуется как «{c['yesno']}».")]
-        cr = [("Главная", "/"), ("Значения карт Таро", "/taro/"), (c["name"], url)]
-        others = ''.join(f'<a class="chip" href="/taro/{t["slug"]}/">{t["name"]}</a>' for t in TAROT if t is not c)
-        body = f"""{breadcrumbs(cr)}
+def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hub_label, sigil_top):
+    n = len(deck)
+    url = f"/taro/{c['slug']}/"
+    title = f"{c['name']} — значение карты Таро, в любви и перевёрнутая | LineLife"
+    desc = f"Значение карты {c['name']} в Таро: {', '.join(c['kw'][:3])}. Прямое и перевёрнутое положение, любовь, работа, совет и ответ «да или нет»."
+    h1 = f"Карта Таро {c['name']}: значение и толкование"
+    prev = deck[(i - 1) % n]; nxt = deck[(i + 1) % n]
+    qa = [(f"Что означает карта {c['name']} в Таро?", c["general"]),
+          (f"Что значит перевёрнутая карта {c['name']}?", c["reversed"]),
+          (f"Что означает {c['name']} в любви и отношениях?", c["love"]),
+          (f"{c['name']}: да или нет?", f"В раскладе «да или нет» карта {c['name']} обычно трактуется как «{c['yesno']}».")]
+    cr = [("Главная", "/"), ("Значения карт Таро", "/taro/")] + crumbs_mid + [(c["name"], url)]
+    chips = ''.join(f'<a class="chip" href="/taro/{t["slug"]}/">{t["name"]}</a>' for t in others if t is not c)
+    body = f"""{breadcrumbs(cr)}
 <article class="entry">
   <header class="entry-head">
-    <div class="sigil tarot-sigil" aria-hidden="true"><span class="num">{c['num']}</span><span class="nm">{c['name']}</span></div>
+    <div class="sigil tarot-sigil" aria-hidden="true"><span class="num">{sigil_top}</span><span class="nm">{c['name']}</span></div>
     <div>
-      <div class="eyebrow">Старший аркан {c['num']}</div>
+      <div class="eyebrow">{eyebrow}</div>
       <h1>{h1}</h1>
       <p class="lead">{c['general']}</p>
       <ul class="kw">{''.join(f'<li>{k}</li>' for k in c['kw'])}</ul>
@@ -204,44 +204,80 @@ def tarot_pages():
 {cta(f"Выпадет ли тебе {c['name']}?", "Задай свой вопрос в боте LineLife и получи расклад Таро прямо в Telegram.", f"seo_taro_{c['slug']}", "🎴 Сделать расклад")}
 <nav class="pager" aria-label="Соседние карты">
   <a href="/taro/{prev['slug']}/">← {prev['name']}</a>
-  <a href="/taro/">Все карты</a>
+  <a href="{hub_url}">{hub_label}</a>
   <a href="/taro/{nxt['slug']}/">{nxt['name']} →</a>
 </nav>
 {faq_html(qa)}
-<section><h2>Другие старшие арканы</h2><div class="chips">{others}</div></section>"""
-        page(url, title, desc, body, [article_ld(h1, desc, url), crumbs_ld(cr), faq_ld(qa)], priority="0.8")
+<section><h2>{others_title}</h2><div class="chips">{chips}<a class="chip more" href="/taro/">Все 78 карт →</a></div></section>"""
+    page(url, title, desc, body, [article_ld(h1, desc, url), crumbs_ld(cr), faq_ld(qa)], priority="0.8")
 
-    # хаб
+
+def tile(c, top):
+    return f'<a class="card tile" href="/taro/{c["slug"]}/"><span class="tnum">{top}</span><h3>{c["name"]}</h3><p>{", ".join(c["kw"][:3])}</p></a>'
+
+
+def tarot_pages():
+    for i, c in enumerate(TAROT):
+        card_page(c, TAROT, i, f"Старший аркан {c['num']}", [], "Другие старшие арканы", TAROT, "/taro/", "Все карты", c["num"])
+    for s in SUITS:
+        deck = [m for m in MINOR if m["suit"] == s["slug"]]
+        hub = f"/taro/{s['slug']}/"
+        for i, c in enumerate(deck):
+            card_page(c, deck, i, f"Младший аркан · масть {s['gen']} · {s['element']}", [(s["name"], hub)],
+                      f"Другие карты масти {s['gen']}", deck, hub, s["name"], c["num"])
+        # хаб масти
+        cr = [("Главная", "/"), ("Значения карт Таро", "/taro/"), (s["name"], hub)]
+        qa = [(f"Что означает масть {s['gen']} в Таро?", s["intro"]),
+              (f"Сколько карт в масти {s['gen']}?", f"14 карт: от Туза до Десятки и четыре придворные карты — Паж, Рыцарь, Королева и Король {s['gen']}."),
+              (f"Какой стихии соответствует масть {s['gen']}?", f"Стихия масти — {s['element'].lower()}. Её темы: {s['theme']}.")]
+        others = ''.join(f'<a class="chip" href="/taro/{o["slug"]}/">{o["name"]}</a>' for o in SUITS if o is not s)
+        body = f"""{breadcrumbs(cr)}
+<section class="hub-head">
+  <div class="eyebrow">Младшие арканы · стихия: {s['element']}</div>
+  <h1>Масть {s['gen']} в Таро: значение всех карт</h1>
+  <p class="lead">{s['intro']}</p>
+</section>
+<section><div class="grid tiles">{''.join(tile(c, c['num']) for c in deck)}</div></section>
+{cta("Задай вопрос картам", "Расклад Таро на любовь, работу или выбор — в боте LineLife. Карта дня бесплатно каждое утро.", f"seo_taro_{s['slug']}", "🎴 Сделать расклад")}
+{faq_html(qa)}
+<section><h2>Другие масти и старшие арканы</h2><div class="chips">{others}<a class="chip" href="/taro/">Старшие арканы</a></div></section>"""
+        page(hub, f"Масть {s['gen']} в Таро: значение всех 14 карт — LineLife",
+             f"Значение карт масти {s['gen']} в Таро: от Туза до Короля. Темы масти — {s['theme']}. Прямое и перевёрнутое положение, любовь и работа.",
+             body, [crumbs_ld(cr), faq_ld(qa), {"@type": "CollectionPage", "name": f"Масть {s['gen']}", "url": SITE + hub, "inLanguage": "ru"}],
+             og_type="website", priority="0.8", freq="monthly")
+
+    # главный хаб Таро
     url = "/taro/"
     cr = [("Главная", "/"), ("Значения карт Таро", url)]
-    grid = ''.join(f'<a class="card tile" href="/taro/{c["slug"]}/"><span class="tnum">{c["num"]}</span><h3>{c["name"]}</h3><p>{", ".join(c["kw"][:3])}</p></a>' for c in TAROT)
-    qa = [("Сколько карт в колоде Таро?", "В классической колоде 78 карт: 22 старших аркана и 56 младших. Старшие арканы описывают важные жизненные этапы и уроки."),
-          ("Что такое старшие арканы?", "Это 22 карты от Шута (0) до Мира (XXI). Их последовательность часто описывают как путь героя — от первого шага до завершения цикла."),
+    suits_html = ''.join(f"""<section><h2><a href="/taro/{s['slug']}/" class="h-link">Масть {s['gen']}</a></h2><p class="muted">{s['element']}: {s['theme']}</p>
+<div class="grid tiles">{''.join(tile(c, c['num']) for c in MINOR if c['suit']==s['slug'])}</div></section>""" for s in SUITS)
+    qa = [("Сколько карт в колоде Таро?", "В классической колоде 78 карт: 22 старших аркана и 56 младших. Младшие арканы делятся на четыре масти: Жезлы, Кубки, Мечи и Пентакли."),
+          ("Чем старшие арканы отличаются от младших?", "Старшие арканы описывают большие жизненные темы и этапы, а младшие — повседневные события, чувства и дела."),
           ("Как сделать расклад Таро онлайн?", "Открой бота @mylinelife_bot в Telegram, задай вопрос и выбери расклад. Карта дня — бесплатно каждый день.")]
     body = f"""{breadcrumbs(cr)}
 <section class="hub-head">
   <div class="eyebrow">Справочник</div>
-  <h1>Значение карт Таро: все старшие арканы</h1>
-  <p class="lead">22 старших аркана — сердце колоды Таро. Здесь собраны значения каждой карты: прямое и перевёрнутое положение, любовь, работа, совет и ответ «да или нет». Выбери карту, чтобы прочитать толкование.</p>
+  <h1>Значение карт Таро: все 78 карт</h1>
+  <p class="lead">Толкования всех карт колоды Таро: 22 старших аркана и 56 младших в четырёх мастях. Для каждой карты — прямое и перевёрнутое положение, любовь, работа, совет и ответ «да или нет».</p>
   <div class="daily" id="daily"></div>
 </section>
-<section><div class="grid tiles">{grid}</div></section>
+<section><h2>Старшие арканы</h2><p class="muted">Большие жизненные темы и этапы</p><div class="grid tiles">{''.join(tile(c, c['num']) for c in TAROT)}</div></section>
+{suits_html}
 <section class="prose card">
   <h2>Как читать карты Таро</h2>
   <p>Каждая карта несёт несколько слоёв смысла. Прямое положение показывает основное значение, перевёрнутое — его ослабленную, задержанную или искажённую форму. В раскладе важна и позиция: одна и та же карта по-разному звучит в позиции «прошлое», «препятствие» или «совет».</p>
-  <p>Старшие арканы говорят о больших темах — выборе, переменах, внутреннем росте. Если в раскладе их много, ситуация воспринимается как значимая и судьбоносная. Помни, что Таро — это повод взглянуть на ситуацию по-новому, а не готовый ответ.</p>
+  <p>Если в раскладе много старших арканов, ситуация воспринимается как значимая. Преобладание одной масти подсказывает сферу: Жезлы — дела и энергия, Кубки — чувства, Мечи — мысли и конфликты, Пентакли — деньги и материальное. Помни, что Таро — это повод взглянуть на ситуацию по-новому, а не готовый ответ.</p>
 </section>
 {cta("Задай свой вопрос картам", "Расклад Таро на любовь, работу или выбор — в боте LineLife. Карта дня бесплатно каждое утро.", "seo_taro_hub", "🎴 Сделать расклад")}
 {faq_html(qa)}
 {daily_script()}"""
-    page(url, "Значение карт Таро: все 22 старших аркана с толкованием — LineLife",
-         "Справочник значений карт Таро: 22 старших аркана — прямое и перевёрнутое положение, любовь, работа, совет и «да или нет». Бесплатная карта дня.",
+    page(url, "Значение карт Таро: все 78 карт с толкованием — LineLife",
+         "Справочник значений всех 78 карт Таро: старшие арканы и масти Жезлов, Кубков, Мечей и Пентаклей. Прямое и перевёрнутое положение, любовь, работа, «да или нет».",
          body, [crumbs_ld(cr), faq_ld(qa), {"@type": "CollectionPage", "name": "Значение карт Таро", "url": SITE + url, "inLanguage": "ru"}],
          og_type="website", priority="0.9", freq="weekly")
 
-
 def daily_script():
-    data = [{"s": c["slug"], "n": c["name"], "k": c["kw"][:3], "a": c["advice"]} for c in TAROT]
+    data = [{"s": c["slug"], "n": c["name"], "k": c["kw"][:3], "a": c["advice"]} for c in TAROT + MINOR]
     return """<script>
 (function(){var C=%s;var el=document.getElementById('daily');if(!el)return;
 var d=new Date();var seed=d.getFullYear()*1000+(d.getMonth()+1)*40+d.getDate();var c=C[(seed*7919)%%C.length];
@@ -475,8 +511,8 @@ def home():
 
 <section>
   <div class="sec-head"><div class="eyebrow">Справочник</div><h2>Значения карт Таро и рун</h2>
-  <p>Толкования всех 22 старших арканов и 24 рун Старшего Футарка: прямое и перевёрнутое положение, любовь, работа, совет.</p></div>
-  <h3 class="sub">Карты Таро</h3><div class="chips">{tarot_chips}<a class="chip more" href="/taro/">Все карты →</a></div>
+  <p>Толкования всех 78 карт Таро и 24 рун Старшего Футарка: прямое и перевёрнутое положение, любовь, работа, совет.</p></div>
+  <h3 class="sub">Карты Таро</h3><div class="chips">{tarot_chips}<a class="chip" href="/taro/zhezly/">Масть Жезлов</a><a class="chip" href="/taro/kubki/">Масть Кубков</a><a class="chip" href="/taro/mechi/">Масть Мечей</a><a class="chip" href="/taro/pentakli/">Масть Пентаклей</a><a class="chip more" href="/taro/">Все 78 карт →</a></div>
   <h3 class="sub">Руны</h3><div class="chips">{rune_chips}<a class="chip more" href="/runy/">Все руны →</a></div>
 </section>
 
@@ -572,6 +608,41 @@ def privacy():
          body, [crumbs_ld(cr)], og_type="website", priority="0.3", freq="yearly")
 
 
+def about():
+    url = "/o-proekte/"
+    cr = [("Главная", "/"), ("О проекте", url)]
+    body = f"""{breadcrumbs(cr)}
+<article class="prose">
+<section class="hub-head">
+  <div class="eyebrow">О проекте</div>
+  <h1>LineLife — гадание по ладони, Таро и руны в Telegram</h1>
+  <p class="lead">LineLife — развлекательный проект о хиромантии, Таро и рунах. Он состоит из Telegram-бота @mylinelife_bot, канала с ежедневной картой @linelife_daily и этого сайта-справочника.</p>
+</section>
+<div class="grid g3">
+  <div class="card"><h3>Бот</h3><p>Разбор ладони по фото, расклады Таро на свой вопрос и руны. Карта дня и руна дня — бесплатно.</p><p><a href="{bot('site_about')}">Открыть бота →</a></p></div>
+  <div class="card"><h3>Канал</h3><p>Каждое утро — карта Таро, руна и гороскоп для всех знаков зодиака.</p><p><a href="{CHANNEL}">Подписаться →</a></p></div>
+  <div class="card"><h3>Справочник</h3><p>Значения всех 78 карт Таро, 24 рун Старшего Футарка и главных линий на ладони.</p><p><a href="/taro/">Перейти →</a></p></div>
+</div>
+<section class="card">
+  <h2>На чём основаны толкования</h2>
+  <p>Значения карт Таро приведены по традиции колоды Райдера — Уэйта, руны — по Старшему Футарку, линии ладони — по классической европейской хиромантии. Все тексты на сайте написаны специально для LineLife.</p>
+  <p>Мы не пугаем и не обещаем: каждое толкование — это повод посмотреть на ситуацию с новой стороны, а не прогноз будущего.</p>
+</section>
+<section class="card">
+  <h2>Важно знать</h2>
+  <p>LineLife — развлекательный сервис для людей старше 18 лет. Материалы сайта и бота не являются предсказанием, медицинской, психологической, юридической или финансовой консультацией. В сложных жизненных ситуациях обращайся к профильным специалистам.</p>
+</section>
+<section class="card">
+  <h2>Контакты</h2>
+  <p>Вопросы и предложения: <a href="mailto:anikeevmaksim@yandex.ru">anikeevmaksim@yandex.ru</a>. Обработка данных описана в <a href="/privacy.html">политике конфиденциальности</a>.</p>
+</section>
+</article>"""
+    page(url, "О проекте LineLife: гадание по ладони, Таро и руны в Telegram",
+         "LineLife — развлекательный проект о хиромантии, Таро и рунах: Telegram-бот, канал с картой дня и справочник значений. Контакты и принципы.",
+         body, [crumbs_ld(cr), {"@type": "AboutPage", "name": "О проекте LineLife", "url": SITE + url, "inLanguage": "ru"}],
+         og_type="website", priority="0.5", freq="yearly")
+
+
 def sitemap():
     xs = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u, pr, fr in pages:
@@ -582,5 +653,5 @@ def sitemap():
 
 
 if __name__ == "__main__":
-    home(); tarot_pages(); rune_pages(); palm_pages(); notfound(); privacy(); sitemap()
+    home(); tarot_pages(); rune_pages(); palm_pages(); notfound(); privacy(); about(); sitemap()
     print(len(pages), "pages")
