@@ -14,7 +14,7 @@ BOT = "https://t.me/mylinelife_bot"
 CHANNEL = "https://t.me/linelife_daily"
 VK = "https://vk.ru/linelife_daily"
 TODAY = "2026-10-18"
-CSS_V = "6"
+CSS_V = "7"
 E = html.escape
 pages = []  # (path, priority, changefreq)
 
@@ -209,7 +209,7 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
     body = f"""{breadcrumbs(cr)}
 <article class="entry">
   <header class="entry-head">
-    <div class="sigil tarot-sigil" aria-hidden="true"><span class="num">{sigil_top}</span><span class="nm">{c['name']}</span></div>
+    <div class="sigil tarot-sigil" aria-hidden="true"><span class="num{" word" if len(sigil_top)>4 else ""}">{sigil_top}</span><span class="nm">{c['name']}</span></div>
     <div>
       <div class="eyebrow">{eyebrow}</div>
       <h1>{h1}</h1>
@@ -249,7 +249,7 @@ def tarot_pages():
         hub = f"/taro/{s['slug']}/"
         for i, c in enumerate(deck):
             card_page(c, deck, i, f"Младший аркан · масть {s['gen']} · {s['element']}", [(s["name"], hub)],
-                      f"Другие карты масти {s['gen']}", deck, hub, s["name"], c["num"])
+                      f"Другие карты масти {s['gen']}", deck, hub, s["name"], {"Паж":"✦","Рыцарь":"♞","Королева":"♛","Король":"♚"}.get(c["num"], c["num"]))
         # хаб масти
         cr = [("Главная", "/"), ("Значения карт Таро", "/taro/"), (s["name"], hub)]
         qa = [(f"Что означает масть {s['gen']} в Таро?", s["intro"]),
