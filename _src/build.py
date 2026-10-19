@@ -12,6 +12,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SITE = "https://mylinelife.github.io"
 BOT = "https://t.me/mylinelife_bot"
 CHANNEL = "https://t.me/linelife_daily"
+VK = "https://vk.ru/linelife_daily"
 TODAY = "2026-10-18"
 CSS_V = "5"
 E = html.escape
@@ -105,7 +106,7 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
     <div><b>Таро</b><a href="/taro/">Значения карт</a><a href="/taro/{TAROT[0]['slug']}/">Шут</a><a href="/taro/smert/">Смерть</a><a href="/taro/zhezly/">Масть Жезлов</a><a href="/taro/kubki/">Масть Кубков</a><a href="/taro/mechi/">Масть Мечей</a><a href="/taro/pentakli/">Масть Пентаклей</a></div>
     <div><b>Руны</b><a href="/runy/">Значения рун</a><a href="/runy/fehu/">Феху</a><a href="/runy/algiz/">Альгиз</a><a href="/runy/gebo/">Гебо</a><a href="/runy/odin/">Руна Одина</a></div>
     <div><b>Хиромантия</b><a href="/hiromantiya/">Линии на руке</a>{''.join(f'<a href="/hiromantiya/{p["slug"]}/">{p["name"]}</a>' for p in PALM)}</div>
-    <div><b>LineLife</b><a href="{bot('site_footer')}">Бот в Telegram</a><a href="{CHANNEL}">Канал с картой дня</a><a href="/o-proekte/">О проекте</a><a href="/privacy.html">Политика конфиденциальности</a></div>
+    <div><b>LineLife</b><a href="{bot('site_footer')}">Бот в Telegram</a><a href="{CHANNEL}">Канал с картой дня</a><a href="{VK}">Группа ВКонтакте</a><a href="/o-proekte/">О проекте</a><a href="/privacy.html">Политика конфиденциальности</a></div>
   </nav>
   <p class="disc"><span class="age">18+</span> LineLife — развлекательный сервис. Материалы сайта и бота не являются предсказанием, медицинской, психологической, юридической или финансовой консультацией.</p>
   <p class="disc">© 2026 LineLife</p>
@@ -469,6 +470,7 @@ def home():
     <div class="cta-row">
       <a class="btn btn-gold" href="{bot('site_hero')}">🖐 Прочитать мою ладонь</a>
       <a class="btn btn-ghost" href="{CHANNEL}">Канал с картой дня</a>
+      <a class="btn btn-ghost" href="{VK}">Мы ВКонтакте</a>
     </div>
     <p class="note">Без регистрации и приложений — всё внутри Telegram. 18+</p>
   </div>
@@ -521,7 +523,7 @@ def home():
 {daily_script()}"""
     graph = [{"@type": "WebSite", "name": "LineLife", "alternateName": "Лайнлайф", "url": SITE + "/", "inLanguage": "ru"},
              {"@type": "Organization", "name": "LineLife", "url": SITE + "/", "logo": SITE + "/assets/icon-512.png",
-              "sameAs": [BOT, CHANNEL]},
+              "sameAs": [BOT, CHANNEL, VK]},
              faq_ld(qa)]
     page("/", "Гадание по ладони по фото онлайн, Таро и руны — LineLife",
          "Гадание по ладони по фото в Telegram: сфотографируй руку и узнай, что говорят линии. Расклады Таро и руны. Карта дня и руна дня бесплатно. 18+",
@@ -620,7 +622,7 @@ def about():
 </section>
 <div class="grid g3">
   <div class="card"><h3>Бот</h3><p>Разбор ладони по фото, расклады Таро на свой вопрос и руны. Карта дня и руна дня — бесплатно.</p><p><a href="{bot('site_about')}">Открыть бота →</a></p></div>
-  <div class="card"><h3>Канал</h3><p>Каждое утро — карта Таро, руна и гороскоп для всех знаков зодиака.</p><p><a href="{CHANNEL}">Подписаться →</a></p></div>
+  <div class="card"><h3>Канал</h3><p>Каждое утро — карта Таро, руна и гороскоп для всех знаков зодиака.</p><p><a href="{CHANNEL}">Подписаться →</a> · <a href="{VK}">Группа ВКонтакте →</a></p></div>
   <div class="card"><h3>Справочник</h3><p>Значения всех 78 карт Таро, 24 рун Старшего Футарка и главных линий на ладони.</p><p><a href="/taro/">Перейти →</a></p></div>
 </div>
 <section class="card">
