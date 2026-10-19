@@ -14,7 +14,7 @@ BOT = "https://t.me/mylinelife_bot"
 CHANNEL = "https://t.me/linelife_daily"
 VK = "https://vk.ru/linelife_daily"
 TODAY = "2026-10-18"
-CSS_V = "7"
+CSS_V = "9"
 E = html.escape
 pages = []  # (path, priority, changefreq)
 
@@ -168,11 +168,12 @@ def faq_html(qa):
         f'<details><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in qa) + '</section>'
 
 
+PALM_HAND = 'M75 188 C70 170 66 150 62 138 L44 108 C40 101 46 94 53 99 L74 124 L74 62 C74 54 86 54 86 62 L86 112 L86 50 C86 42 98 42 98 50 L98 110 L98 56 C98 48 110 48 110 56 L110 112 L110 72 C110 64 122 64 122 72 L122 128 C122 150 118 170 112 188'
 PALM_SVG_PATHS = {
-    "liniya-zhizni": '<path d="M80 106c4 18 6 34 2 52" />',
-    "liniya-golovy": '<path d="M80 110c16-6 34-6 50 2" />',
-    "liniya-serdca": '<path d="M86 98c14-6 32-4 46 4" />',
-    "liniya-sudby": '<path d="M104 160c0-18 0-36 2-54" />',
+    "liniya-zhizni": '<path d="M75 133 C88 147 89 170 83 186" />',
+    "liniya-golovy": '<path d="M75 133 C89 137 103 143 114 153" />',
+    "liniya-serdca": '<path d="M121 136 C110 135 97 136 88 126" />',
+    "liniya-sudby": '<path d="M94 187 C93 170 92.5 152 92 132" />',
 }
 PALM_COLORS = {p["slug"]: p["color"] for p in PALM}
 
@@ -181,14 +182,14 @@ def palm_svg(highlight=None, size_class="palm-svg"):
     lines = []
     for slug, path in PALM_SVG_PATHS.items():
         on = highlight is None or slug == highlight
-        w = "4" if (highlight and on) else "2"
+        w = "3.4" if (highlight and on) else "2"
         op = "1" if on else ".25"
         lines.append(path.replace("/>", f'stroke="{PALM_COLORS[slug]}" stroke-width="{w}" stroke-linecap="round" opacity="{op}"/>'))
     return f"""<svg class="{size_class}" viewBox="0 0 200 200" fill="none" role="img" aria-label="Схема ладони с основными линиями">
 <circle cx="100" cy="100" r="92" stroke="#3a2f5c"/>
 <circle cx="100" cy="100" r="80" stroke="#e8c27a33" stroke-dasharray="2 6"/>
-<path d="M72 168c-10-10-22-28-26-46-3-12 6-16 12-8l10 14V58c0-8 12-8 12 0v42-56c0-8 12-8 12 0v56-60c0-8 12-8 12 0v60-52c0-8 12-8 12 0v66l8-12c6-8 16-4 12 6-6 18-14 38-28 50-14 12-38 10-46-2Z" stroke="#efe9ff" stroke-width="2" stroke-linejoin="round"/>
-{''.join(lines)}
+<g transform="translate(100 102) scale(1.18) translate(-83 -118)"><path d="{PALM_HAND}" stroke="#efe9ff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>{"".join(lines)}</g>
+
 </svg>"""
 
 
