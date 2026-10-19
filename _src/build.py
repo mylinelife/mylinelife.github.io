@@ -14,9 +14,32 @@ BOT = "https://t.me/mylinelife_bot"
 CHANNEL = "https://t.me/linelife_daily"
 VK = "https://vk.ru/linelife_daily"
 TODAY = "2026-10-18"
-CSS_V = "5"
+CSS_V = "6"
 E = html.escape
 pages = []  # (path, priority, changefreq)
+
+
+PINS = {
+    "/hiromantiya/": ("pin-linii-na-ruke", "Линии на руке и их значение — схема ладони: линия жизни, сердца, головы и судьбы"),
+    "/hiromantiya/liniya-zhizni/": ("pin-liniya-zhizni", "Линия жизни на руке — схема и значение в хиромантии"),
+    "/hiromantiya/liniya-serdca/": ("pin-liniya-serdca", "Линия сердца на руке — схема и значение в хиромантии"),
+    "/hiromantiya/liniya-golovy/": ("pin-liniya-golovy", "Линия головы на руке — схема и значение в хиромантии"),
+    "/hiromantiya/liniya-sudby/": ("pin-liniya-sudby", "Линия судьбы на руке — схема и значение в хиромантии"),
+    "/taro/": ("pin-znachenie-kart-taro", "Значение карт Таро Уэйта — шпаргалка: любовь, работа, совет, да или нет"),
+    "/taro/vlyublennye/": ("pin-taro-vlyublennye", "Карта Таро Влюблённые — значение в любви и отношениях"),
+    "/runy/": ("pin-vse-runy", "Все руны Старшего Футарка и их значение — таблица 24 рун"),
+}
+
+
+def pin_block(url):
+    if url not in PINS:
+        return ""
+    name, alt = PINS[url]
+    return f"""<section class="pin-block card">
+  <img src="/assets/pins/{name}.jpg" width="500" height="750" loading="lazy" alt="{E(alt)}" data-pin-description="{E(alt)} — LineLife">
+  <div><h2>Шпаргалка</h2><p>Сохрани картинку себе в Pinterest или на телефон, чтобы она была под рукой.</p>
+  <p><a class="btn btn-ghost btn-sm" href="https://www.pinterest.com/pin/create/button/?url={SITE}{url}&amp;media={SITE}/assets/pins/{name}.jpg&amp;description={E(alt)}" target="_blank" rel="noopener">Сохранить в Pinterest</a></p></div>
+</section>"""
 
 
 def write(path, content):
@@ -100,6 +123,7 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
 </header>
 <main>
 {body}
+{pin_block(url)}
 </main>
 <footer>
   <nav class="foot-nav" aria-label="Карта сайта">
