@@ -86,6 +86,7 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="p:domain_verify" content="6ca9b9bec06086458cbe8ece2f7eb6d4">
 <title>{E(title)}</title>
 <meta name="description" content="{E(desc)}">
 <link rel="canonical" href="{canon}">
