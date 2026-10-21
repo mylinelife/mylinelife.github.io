@@ -176,13 +176,19 @@ PALM_SVG_PATHS = {
     "liniya-golovy": '<path d="M68.18 132.82 C83 132.82 98.96 137.95 111.5 152.2" />',
     "liniya-serdca": '<path d="M69.89 123.7 C85.28 122.56 108.08 123.7 125.18 130.54" />',
     "liniya-sudby": '<path d="M100.67 189.82 C102.38 168.16 104.09 142.51 106.37 115.72" />',
+    "liniya-braka": '<path d="M125.75 119.71 C122.33 119.14 118.91 119.14 115.49 119.71" />',
 }
+PALM_MAIN = [p for p in PALM if not p.get("minor")]
+PALM_MINOR = [p for p in PALM if p.get("minor")]
+MINOR_SLUGS = {p["slug"] for p in PALM_MINOR}
 PALM_COLORS = {p["slug"]: p["color"] for p in PALM}
 
 
 def palm_svg(highlight=None, size_class="palm-svg"):
     lines = []
     for slug, path in PALM_SVG_PATHS.items():
+        if slug in MINOR_SLUGS and slug != highlight:
+            continue
         on = highlight is None or slug == highlight
         w = "3.4" if (highlight and on) else "2"
         op = "1" if on else ".25"
@@ -437,7 +443,7 @@ def palm_pages():
     </div>
   </header>
   <section class="prose card"><h2>Что означает {p['name'].lower()}</h2><p>{p['general']}</p></section>
-  <h2>Как читать {p['name'].lower()}</h2>
+  <h2>Как читать {p['name'].lower().replace('линия','линию',1)}</h2>
   <div class="entry-grid">{variants}</div>
   <p class="muted">Хиромантия — традиция толкования линий руки, а не научный метод. Толкования приведены в развлекательных целях.</p>
 </article>
@@ -448,7 +454,8 @@ def palm_pages():
 
     url = "/hiromantiya/"
     cr = [("Главная", "/"), ("Хиромантия", url)]
-    tiles = ''.join(f'<a class="card tile" href="/hiromantiya/{p["slug"]}/"><span class="dot" style="background:{p["color"]}"></span><h3>{p["name"]}</h3><p>{p["general"][:110].rsplit(" ",1)[0]}…</p></a>' for p in PALM)
+    tiles = ''.join(f'<a class="card tile" href="/hiromantiya/{p["slug"]}/"><span class="dot" style="background:{p["color"]}"></span><h3>{p["name"]}</h3><p>{p["general"][:110].rsplit(" ",1)[0]}…</p></a>' for p in PALM_MAIN)
+    minor_tiles = ''.join(f'<a class="card tile" href="/hiromantiya/{p["slug"]}/"><span class="dot" style="background:{p["color"]}"></span><h3>{p["name"]}</h3><p>{p["where"][:120].rsplit(" ",1)[0]}…</p></a>' for p in PALM_MINOR)
     qa = [("Какую руку смотрят в хиромантии?", "Обычно смотрят ведущую руку: правую у правшей и левую у левшей. Вторую руку иногда читают как врождённые склонности."),
           ("Можно ли погадать по ладони по фото?", "Да. Пришли фото ладони в бот @mylinelife_bot: раскрытая ведущая рука, ровный свет, линии хорошо видны."),
           ("Меняются ли линии на руке?", "Да, со временем рисунок линий может меняться, поэтому ладонь стоит иногда разглядывать заново.")]
@@ -462,6 +469,7 @@ def palm_pages():
   <div class="hub-art">{palm_svg()}</div>
 </section>
 <section><div class="grid tiles g2">{tiles}</div></section>
+<section><h2>Второстепенные линии</h2><div class="grid tiles g2">{minor_tiles}</div></section>
 <section class="prose card">
   <h2>Как сфотографировать ладонь для гадания</h2>
   <ol>
@@ -535,7 +543,7 @@ def home():
     <h2>Главные линии на ладони</h2>
     <p>В хиромантии принято смотреть ведущую руку: правую у правшей и левую у левшей. Четыре линии, с которых начинается любой разбор:</p>
   </div>
-  <div class="grid g2">{''.join(f'<a class="card tile" href="/hiromantiya/{p["slug"]}/"><span class="dot" style="background:{p["color"]}"></span><h3>{p["name"]}</h3><p>{p["where"]}</p></a>' for p in PALM)}</div>
+  <div class="grid g2">{''.join(f'<a class="card tile" href="/hiromantiya/{p["slug"]}/"><span class="dot" style="background:{p["color"]}"></span><h3>{p["name"]}</h3><p>{p["where"]}</p></a>' for p in PALM_MAIN)}</div>
 </section>
 
 <section>
