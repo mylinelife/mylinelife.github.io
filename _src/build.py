@@ -205,7 +205,7 @@ def palm_svg(highlight=None, size_class="palm-svg"):
 def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hub_label, sigil_top):
     n = len(deck)
     url = f"/taro/{c['slug']}/"
-    title = f"{c['name']} — значение карты Таро, в любви и перевёрнутая | LineLife"
+    title = f"{c['name']}: значение карты Таро в любви | LineLife"
     desc = f"Значение карты {c['name']} в Таро: {', '.join(c['kw'][:3])}. Прямое и перевёрнутое положение, любовь, работа, совет и ответ «да или нет»."
     h1 = f"Карта Таро {c['name']}: значение и толкование"
     prev = deck[(i - 1) % n]; nxt = deck[(i + 1) % n]
@@ -242,7 +242,7 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
   <a href="/taro/{nxt['slug']}/">{nxt['name']} →</a>
 </nav>
 {faq_html(qa)}
-<section><h2>{others_title}</h2><div class="chips">{chips}<a class="chip more" href="/taro/">Все 78 карт →</a></div></section>"""
+<section><h2>{others_title}</h2><div class="chips">{chips}<a class="chip more" href="/taro/">Все 78 карт →</a><a class="chip more" href="/taro/da-ili-net/">Таро да или нет →</a></div></section>"""
     page(url, title, desc, body, [article_ld(h1, desc, url), crumbs_ld(cr), faq_ld(qa)], priority="0.8")
 
 
@@ -294,6 +294,7 @@ def tarot_pages():
   <h1>Значение карт Таро: все 78 карт</h1>
   <p class="lead">Толкования всех карт колоды Таро: 22 старших аркана и 56 младших в четырёх мастях. Для каждой карты — прямое и перевёрнутое положение, любовь, работа, совет и ответ «да или нет».</p>
   <div class="daily" id="daily"></div>
+  <p><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет: быстрый ответ картами →</a></p>
 </section>
 <section><h2>Старшие арканы</h2><p class="muted">Большие жизненные темы и этапы</p><div class="grid tiles">{''.join(tile(c, c['num']) for c in TAROT)}</div></section>
 {suits_html}
@@ -645,6 +646,53 @@ def privacy():
          body, [crumbs_ld(cr)], og_type="website", priority="0.3", freq="yearly")
 
 
+def yesno_page():
+    url = "/taro/da-ili-net/"
+    cards = TAROT + MINOR
+    def grp(c):
+        y = c["yesno"].lower()
+        if y.startswith("да") or y.startswith("скорее да"): return "yes"
+        if y.startswith("нет") and "да для" not in y or y.startswith("пока нет") or y.startswith("скорее нет"): return "no"
+        return "maybe"
+    G = {k: [c for c in cards if grp(c) == k] for k in ("yes", "no", "maybe")}
+    def chips(lst):
+        return ''.join(f'<a class="chip" href="/taro/{c["slug"]}/">{c["name"]} <b>· {c["yesno"].lower()}</b></a>' for c in lst)
+    js = json.dumps([{"s": c["slug"], "n": c["name"], "y": c["yesno"], "g": grp(c)} for c in cards], ensure_ascii=False)
+    cr = [("Главная", "/"), ("Значения карт Таро", "/taro/"), ("Таро да или нет", url)]
+    qa = [("Как работает гадание Таро на «да или нет»?", "Сформулируй вопрос, на который можно ответить «да» или «нет», вытяни одну карту и посмотри её значение в такой трактовке. Одни карты читаются как «да», другие как «нет», а некоторые показывают, что ответ зависит от обстоятельств."),
+          ("Как правильно задать вопрос картам?", "Вопрос должен быть конкретным и закрытым: «Получится ли у меня сменить работу в этом году?» вместо «Что меня ждёт?». Чем яснее вопрос, тем понятнее ответ."),
+          ("Что делать, если выпала карта «пока неясно»?", "Такая карта говорит, что ситуация ещё не определилась. Уточни вопрос, дождись новых обстоятельств или сделай полный расклад — например, на три карты в боте LineLife."),
+          ("Можно ли гадать на «да или нет» каждый день?", "Лучше не задавать один и тот же вопрос по несколько раз: каждый новый ответ только запутывает. Таро — повод задуматься, а не готовое решение.")]
+    body = f"""{breadcrumbs(cr)}
+<section class="hub-head">
+  <div class="eyebrow">Таро онлайн · бесплатно</div>
+  <h1>Таро да или нет: ответ по всем 78 картам</h1>
+  <p class="lead">Задай картам вопрос, на который можно ответить «да» или «нет», и вытяни карту. Ниже — трактовка каждой карты колоды в такой формулировке: какие карты говорят «да», какие «нет», а какие просят подождать.</p>
+  <div class="daily" id="yn"><button class="btn" id="yn-btn" type="button">🔮 Вытянуть карту</button><div id="yn-out" aria-live="polite"></div></div>
+</section>
+<section class="card prose">
+  <h2>Как гадать на «да или нет»</h2>
+  <p>Сформулируй вопрос, на который можно ответить одним словом. Спокойно подумай о нём и вытяни карту. Ответ зависит от значения карты: например, Солнце, Звезда или Туз Кубков в большинстве раскладов говорят «да», а Башня или Десятка Мечей — «нет». Если вопрос важный, одной карты мало, лучше сделать полный расклад.</p>
+</section>
+<section><h2>Карты, которые говорят «да»</h2><p class="muted">{len(G['yes'])} карт</p><div class="chips">{chips(G['yes'])}</div></section>
+<section><h2>Карты, которые говорят «нет»</h2><p class="muted">{len(G['no'])} карт</p><div class="chips">{chips(G['no'])}</div></section>
+<section><h2>Карты, где ответ неоднозначен</h2><p class="muted">{len(G['maybe'])} карт: ответ зависит от обстоятельств</p><div class="chips">{chips(G['maybe'])}</div></section>
+{cta("Нужен точный ответ?", "Одна карта отвечает коротко. В боте LineLife можно сделать полный расклад Таро на свой вопрос, а карта дня бесплатна каждое утро.", "seo_taro_yesno", "🎴 Сделать расклад")}
+{faq_html(qa)}
+<p class="muted">Таро — развлекательный сервис, а не предсказание. Не принимай по картам важные решения о здоровье, деньгах и безопасности.</p>
+<script>
+(function(){{var C={js};var b=document.getElementById('yn-btn'),o=document.getElementById('yn-out');if(!b)return;
+var L={{yes:'Да',no:'Нет',maybe:'Не так просто'}};
+b.addEventListener('click',function(){{var c=C[Math.floor(Math.random()*C.length)];
+o.innerHTML='<div class="daily-in"><div class="eyebrow">Твоя карта</div><h3><a href="/taro/'+c.s+'/">'+c.n+'</a></h3><p class="big">'+L[c.g]+'</p><p class="muted">Трактовка: '+c.y.toLowerCase()+'</p></div>';}});
+}})();
+</script>"""
+    title = "Таро да или нет онлайн: ответ по всем 78 картам — LineLife"
+    desc = "Гадание Таро на «да или нет» онлайн бесплатно: вытяни карту и узнай ответ. Трактовка всех 78 карт — какие говорят «да», какие «нет», какие просят подождать."
+    page(url, title, desc, body, [article_ld("Таро да или нет: ответ по всем 78 картам", desc, url), crumbs_ld(cr), faq_ld(qa)],
+         og_type="article", priority="0.9", freq="monthly")
+
+
 def about():
     url = "/o-proekte/"
     cr = [("Главная", "/"), ("О проекте", url)]
@@ -690,5 +738,5 @@ def sitemap():
 
 
 if __name__ == "__main__":
-    home(); tarot_pages(); rune_pages(); palm_pages(); notfound(); privacy(); about(); sitemap()
+    home(); tarot_pages(); yesno_page(); rune_pages(); palm_pages(); notfound(); privacy(); about(); sitemap()
     print(len(pages), "pages")
