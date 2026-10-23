@@ -294,7 +294,7 @@ def tarot_pages():
   <h1>Значение карт Таро: все 78 карт</h1>
   <p class="lead">Толкования всех карт колоды Таро: 22 старших аркана и 56 младших в четырёх мастях. Для каждой карты — прямое и перевёрнутое положение, любовь, работа, совет и ответ «да или нет».</p>
   <div class="daily" id="daily"></div>
-  <p><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет: быстрый ответ картами →</a></p>
+  <p class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро на сегодня →</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет →</a></p>
 </section>
 <section><h2>Старшие арканы</h2><p class="muted">Большие жизненные темы и этапы</p><div class="grid tiles">{''.join(tile(c, c['num']) for c in TAROT)}</div></section>
 {suits_html}
@@ -359,6 +359,7 @@ def rune_pages():
 <nav class="pager" aria-label="Соседние руны">
   <a href="/runy/{prev['slug']}/">← {prev['name']}</a>
   <a href="/runy/">Все руны</a>
+  <a href="/runy/runa-dnya/">Руна дня</a>
   <a href="/runy/{nxt['slug']}/">{nxt['name']} →</a>
 </nav>
 {faq_html(qa)}
@@ -409,6 +410,7 @@ def rune_pages():
   <h1>Значение рун Старшего Футарка</h1>
   <p class="lead">24 руны Старшего Футарка с толкованием: прямое и перевёрнутое положение, значение в любви и работе, совет руны. Руны разделены на три эттира по восемь знаков.</p>
 </section>
+<p class="chips"><a class="chip" href="/runy/runa-dnya/">ᚠ Руна дня на сегодня: гадание на рунах онлайн →</a></p>
 {groups}
 <section><a class="card tile" href="/runy/odin/"><span class="rs">◯</span><h3>Пустая руна (руна Одина)</h3><p>Современное дополнение к набору</p></a></section>
 <section class="prose card">
@@ -417,8 +419,8 @@ def rune_pages():
 </section>
 {cta("Руна дня ждёт тебя", "Руна дня бесплатно каждое утро и расклады на рунах — в боте LineLife.", "seo_runy_hub", "ᚠ Вытянуть руну")}
 {faq_html(qa)}"""
-    page(url, "Значение рун: все 24 руны Старшего Футарка с толкованием — LineLife",
-         "Справочник рун Старшего Футарка: значение всех 24 рун, прямое и перевёрнутое положение, любовь, работа, совет. Бесплатная руна дня в Telegram.",
+    page(url, "Руны и их значение: все 24 руны Старшего Футарка | LineLife",
+         "Руны и их значение: описание всех 24 рун Старшего Футарка, прямое и перевёрнутое положение, любовь, работа. Гадание на рунах онлайн и руна дня бесплатно.",
          body, [crumbs_ld(cr), faq_ld(qa), {"@type": "CollectionPage", "name": "Значение рун", "url": SITE + url, "inLanguage": "ru"}],
          og_type="website", priority="0.9", freq="weekly")
 
@@ -464,7 +466,7 @@ def palm_pages():
 <section class="hub-head with-art">
   <div>
     <div class="eyebrow">Справочник</div>
-    <h1>Хиромантия: значение линий на руке</h1>
+    <h1>Линии на руке и их значение: хиромантия</h1>
     <p class="lead">Хиромантия читает характер и склонности по рисунку ладони. Любой разбор начинается с четырёх главных линий: жизни, сердца, головы и судьбы. Выбери линию, чтобы узнать, где она находится и как её трактуют.</p>
   </div>
   <div class="hub-art">{palm_svg()}</div>
@@ -483,7 +485,7 @@ def palm_pages():
 </section>
 {cta("Гадание по ладони по фото", "Пришли фото ладони в бот LineLife — и получи разбор основных линий прямо в Telegram.", "seo_palm_hub", "🖐 Прочитать мою ладонь")}
 {faq_html(qa)}"""
-    page(url, "Хиромантия онлайн: значение линий на руке с фото и схемой — LineLife",
+    page(url, "Линии на руке и их значение: хиромантия по ладони | LineLife",
          "Хиромантия для начинающих: линия жизни, сердца, головы и судьбы — где находятся и что означают. Гадание по ладони по фото в Telegram.",
          body, [crumbs_ld(cr), faq_ld(qa), {"@type": "CollectionPage", "name": "Хиромантия", "url": SITE + url, "inLanguage": "ru"}],
          og_type="website", priority="0.9", freq="weekly")
@@ -550,6 +552,7 @@ def home():
 <section>
   <div class="sec-head"><div class="eyebrow">Справочник</div><h2>Значения карт Таро и рун</h2>
   <p>Толкования всех 78 карт Таро и 24 рун Старшего Футарка: прямое и перевёрнутое положение, любовь, работа, совет.</p></div>
+  <div class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет</a><a class="chip" href="/runy/runa-dnya/">ᚠ Руна дня</a></div>
   <h3 class="sub">Карты Таро</h3><div class="chips">{tarot_chips}<a class="chip" href="/taro/zhezly/">Масть Жезлов</a><a class="chip" href="/taro/kubki/">Масть Кубков</a><a class="chip" href="/taro/mechi/">Масть Мечей</a><a class="chip" href="/taro/pentakli/">Масть Пентаклей</a><a class="chip more" href="/taro/">Все 78 карт →</a></div>
   <h3 class="sub">Руны</h3><div class="chips">{rune_chips}<a class="chip more" href="/runy/">Все руны →</a></div>
 </section>
@@ -562,7 +565,7 @@ def home():
               "sameAs": [BOT, CHANNEL, VK, PINTEREST]},
              faq_ld(qa)]
     page("/", "Гадание по ладони по фото онлайн, Таро и руны — LineLife",
-         "Гадание по ладони по фото в Telegram: сфотографируй руку и узнай, что говорят линии. Расклады Таро и руны. Карта дня и руна дня бесплатно. 18+",
+         "Гадание по ладони по фото, на Таро и рунах онлайн бесплатно в Telegram: сфотографируй руку и узнай, что говорят линии. Карта дня и руна дня. 18+",
          body, graph, og_type="website", priority="1.0", freq="daily")
 
 
@@ -693,6 +696,82 @@ o.innerHTML='<div class="daily-in"><div class="eyebrow">Твоя карта</div
          og_type="article", priority="0.9", freq="monthly")
 
 
+def day_pages():
+    # --- карта дня ---
+    url = "/taro/karta-dnya/"
+    cr = [("Главная", "/"), ("Значения карт Таро", "/taro/"), ("Карта дня", url)]
+    data = [{"s": c["slug"], "n": c["name"], "k": c["kw"][:3], "a": c["advice"], "l": c["love"], "w": c["work"]} for c in TAROT + MINOR]
+    qa = [("Что такое карта дня в Таро?", "Карта дня — это одна карта, которую вытягивают утром как подсказку на предстоящий день. Она не предсказывает события, а показывает, на что стоит обратить внимание."),
+          ("Как пользоваться картой дня?", "Утром спокойно подумай о предстоящем дне, нажми «Вытянуть карту» и прочитай значение. Вечером вспомни, как карта отозвалась в событиях дня. Новую карту в тот же день лучше не вытягивать: так подсказка остаётся честной."),
+          ("Карта дня на сегодня бесплатно: где её получить?", "На этой странице карта дня доступна бесплатно и без регистрации. Каждое утро новую карту также присылает Telegram-канал @linelife_daily и бот @mylinelife_bot."),
+          ("Что значит перевёрнутая карта дня?", "Перевёрнутое положение смягчает или задерживает значение карты. Подробные трактовки каждой карты, в том числе перевёрнутой, есть в справочнике значений карт Таро.")]
+    chips = ''.join(f'<a class="chip" href="/taro/{c["slug"]}/">{c["name"]}</a>' for c in TAROT)
+    body = f"""{breadcrumbs(cr)}
+<section class="hub-head">
+  <div class="eyebrow">Таро · бесплатно · на сегодня</div>
+  <h1>Карта дня Таро на сегодня онлайн бесплатно</h1>
+  <p class="lead">Одна карта Таро как подсказка на день: значение, совет и тема дня. Нажми кнопку, и мы вытянем карту. Она одинакова для всех в течение суток, а завтра будет новая.</p>
+  <div class="daily" id="kd"></div>
+</section>
+<section class="card prose">
+  <h2>Как читать карту дня</h2>
+  <p>Прочитай ключевые слова карты и совет. Не ищи в карте точных событий: она показывает настроение дня и то, на что полезно обратить внимание. Если выпала сложная карта вроде Башни или Смерти, это не плохой знак: чаще она говорит о переменах и завершении старого.</p>
+  <p>Хочешь узнать больше? Загляни в значение карты в любви, работе и в ответ «да или нет». Все 78 карт описаны в <a href="/taro/">справочнике значений карт Таро</a>, а быстрый ответ на вопрос даёт страница <a href="/taro/da-ili-net/">Таро да или нет</a>.</p>
+</section>
+<section><h2>Значения карт дня: старшие арканы</h2><div class="chips">{chips}<a class="chip more" href="/taro/">Все 78 карт →</a></div></section>
+{cta("Карта дня каждое утро", "Подпишись на канал или открой бота: карта дня и руна дня бесплатно каждое утро, а полный расклад на свой вопрос можно сделать в боте LineLife.", "seo_taro_karta_dnya", "🎴 Получить карту дня")}
+{faq_html(qa)}
+<p class="muted">Таро — развлекательный сервис, а не предсказание. Карта дня не заменяет советов специалистов.</p>
+<script>
+(function(){{var C={json.dumps(data, ensure_ascii=False)};var el=document.getElementById('kd');if(!el)return;
+function show(){{var d=new Date();var seed=d.getFullYear()*1000+(d.getMonth()+1)*40+d.getDate();var c=C[(seed*7919)%C.length];
+el.innerHTML='<div class="daily-in"><div class="eyebrow">Карта дня · '+d.toLocaleDateString('ru-RU',{{day:'numeric',month:'long'}})+'</div><h3><a href="/taro/'+c.s+'/">'+c.n+'</a></h3><p class="note">'+c.k.join(' · ')+'</p><p><b>Совет дня.</b> '+c.a+'</p><p><b>В любви.</b> '+c.l+'</p><p><b>В работе.</b> '+c.w+'</p><p class="note"><a href="/taro/'+c.s+'/">Полное значение карты →</a></p></div>';}}
+el.innerHTML='<button class="btn" type="button" id="kd-btn">🔮 Вытянуть карту дня</button>';document.getElementById('kd-btn').addEventListener('click',show);
+}})();
+</script>"""
+    desc = "Карта дня Таро на сегодня онлайн бесплатно: вытяни карту, прочитай значение, совет дня, толкование в любви и работе. Новая карта каждое утро."
+    page(url, "Карта дня Таро на сегодня онлайн бесплатно — LineLife", desc, body,
+         [article_ld("Карта дня Таро на сегодня онлайн бесплатно", desc, url), crumbs_ld(cr), faq_ld(qa)],
+         og_type="article", priority="0.9", freq="daily")
+
+    # --- руна дня ---
+    url = "/runy/runa-dnya/"
+    cr = [("Главная", "/"), ("Значение рун", "/runy/"), ("Руна дня", url)]
+    data = [{"s": r["slug"], "n": r["name"], "y": r["sym"], "k": r["kw"][:3], "a": r["advice"], "l": r["love"], "w": r["work"]} for r in RUNES]
+    qa = [("Что такое руна дня?", "Руна дня — одна руна Старшего Футарка, которую вытягивают утром как подсказку на день. Она задаёт тему и настроение дня, а не предсказывает события."),
+          ("Как гадать на руне дня?", "Спокойно настройся на день, нажми «Вытянуть руну» и прочитай значение. Вечером вспомни, как руна проявилась в событиях дня. Вытягивать новую руну в тот же день не нужно."),
+          ("Руна дня на сегодня бесплатно: где получить?", "На этой странице руна дня доступна бесплатно и без регистрации, а каждое утро новую руну присылает Telegram-канал @linelife_daily и бот @mylinelife_bot."),
+          ("Сколько рун в Старшем Футарке?", "В Старшем Футарке 24 руны, разделённые на три атта по 8 рун. Значение каждой описано в справочнике рун.")]
+    chips = ''.join(f'<a class="chip" href="/runy/{r["slug"]}/">{r["sym"]} {r["name"]}</a>' for r in RUNES)
+    body = f"""{breadcrumbs(cr)}
+<section class="hub-head">
+  <div class="eyebrow">Руны · бесплатно · на сегодня</div>
+  <h1>Руна дня на сегодня: гадание на рунах онлайн бесплатно</h1>
+  <p class="lead">Одна руна Старшего Футарка как подсказка на день: значение, совет и тема дня. Нажми кнопку, и мы вытянем руну. В течение суток она одна для всех, а завтра будет новая.</p>
+  <div class="daily" id="rd"></div>
+</section>
+<section class="card prose">
+  <h2>Как читать руну дня</h2>
+  <p>Прочитай ключевые слова руны и совет. Руны не обещают конкретных событий: они подсказывают, на чём лучше сосредоточиться. Если руна перевёрнутая или тяжёлая, как Хагалаз или Наутиз, это не приговор, а повод быть внимательнее и не торопиться.</p>
+  <p>Значение всех 24 рун, в том числе перевёрнутых, описано в <a href="/runy/">справочнике рун Старшего Футарка</a>. Если интересуют карты, загляни на страницу <a href="/taro/karta-dnya/">карта дня Таро</a>.</p>
+</section>
+<section><h2>Значения рун</h2><div class="chips">{chips}</div></section>
+{cta("Руна дня каждое утро", "Подпишись на канал или открой бота: руна дня и карта дня бесплатно каждое утро, а гадание на рунах на свой вопрос можно сделать в боте LineLife.", "seo_runa_dnya", "ᚠ Получить руну дня")}
+{faq_html(qa)}
+<p class="muted">Руны — развлекательный сервис, а не предсказание.</p>
+<script>
+(function(){{var C={json.dumps(data, ensure_ascii=False)};var el=document.getElementById('rd');if(!el)return;
+function show(){{var d=new Date();var seed=d.getFullYear()*1000+(d.getMonth()+1)*40+d.getDate();var c=C[(seed*104729+11)%C.length];
+el.innerHTML='<div class="daily-in"><div class="eyebrow">Руна дня · '+d.toLocaleDateString('ru-RU',{{day:'numeric',month:'long'}})+'</div><h3><a href="/runy/'+c.s+'/">'+c.y+' '+c.n+'</a></h3><p class="note">'+c.k.join(' · ')+'</p><p><b>Совет дня.</b> '+c.a+'</p><p><b>В любви.</b> '+c.l+'</p><p><b>В работе.</b> '+c.w+'</p><p class="note"><a href="/runy/'+c.s+'/">Полное значение руны →</a></p></div>';}}
+el.innerHTML='<button class="btn" type="button" id="rd-btn">ᚠ Вытянуть руну дня</button>';document.getElementById('rd-btn').addEventListener('click',show);
+}})();
+</script>"""
+    desc = "Руна дня на сегодня онлайн бесплатно: вытяни руну Старшего Футарка, прочитай значение, совет дня, толкование в любви и работе. Новая руна каждое утро."
+    page(url, "Руна дня на сегодня: гадание на рунах онлайн — LineLife", desc, body,
+         [article_ld("Руна дня на сегодня: гадание на рунах онлайн бесплатно", desc, url), crumbs_ld(cr), faq_ld(qa)],
+         og_type="article", priority="0.9", freq="daily")
+
+
 def about():
     url = "/o-proekte/"
     cr = [("Главная", "/"), ("О проекте", url)]
@@ -738,5 +817,5 @@ def sitemap():
 
 
 if __name__ == "__main__":
-    home(); tarot_pages(); yesno_page(); rune_pages(); palm_pages(); notfound(); privacy(); about(); sitemap()
+    home(); tarot_pages(); yesno_page(); rune_pages(); day_pages(); palm_pages(); notfound(); privacy(); about(); sitemap()
     print(len(pages), "pages")
