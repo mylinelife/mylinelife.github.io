@@ -14,8 +14,9 @@ BOT = "https://t.me/mylinelife_bot"
 CHANNEL = "https://t.me/linelife_daily"
 VK = "https://vk.ru/linelife_daily"
 PINTEREST = "https://ru.pinterest.com/mylinelife_bot/"
-TODAY = "2026-10-18"
-CSS_V = "10"
+TODAY = "2026-10-24"
+TODAY_RU = "24 октября 2026"
+CSS_V = "11"
 E = html.escape
 pages = []  # (path, priority, changefreq)
 
@@ -226,6 +227,7 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
       <ul class="kw">{''.join(f'<li>{k}</li>' for k in c['kw'])}</ul>
     </div>
   </header>
+  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией LineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <div class="entry-grid">
     <section class="card"><h2>Перевёрнутая карта {c['name']}</h2><p>{c['reversed']}</p></section>
     <section class="card"><h2>{c['name']} в любви и отношениях</h2><p>{c['love']}</p></section>
@@ -347,6 +349,7 @@ def rune_pages():
       <ul class="kw"><li>«{r['meaning']}»</li>{''.join(f'<li>{k}</li>' for k in r['kw'])}</ul>
     </div>
   </header>
+  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией LineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <div class="entry-grid">
     <section class="card"><h2>{'Перевёрнутая руна ' + r['name'] if r['rev'] else 'Перевёрнутое положение'}</h2><p>{revtxt}</p></section>
     <section class="card"><h2>Руна {r['name']} в любви</h2><p>{r['love']}</p></section>
@@ -382,6 +385,7 @@ def rune_pages():
       <ul class="kw"><li>неизвестность</li><li>судьба</li><li>доверие</li><li>чистый лист</li></ul>
     </div>
   </header>
+  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией LineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <div class="entry-grid">
     <section class="card"><h2>Откуда она взялась</h2><p>В исторических рунических рядах пустой руны нет: её добавили в XX веке. Поэтому одни гадающие убирают её из набора, а другие считают важным знаком.</p></section>
     <section class="card"><h2>Как её читают</h2><p>Если пустая руна выпала в раскладе, её трактуют как знак, что ответ пока скрыт, а исход зависит от решений, которые ещё не приняты.</p></section>
@@ -445,6 +449,7 @@ def palm_pages():
       <p class="lead">{p['where']}</p>
     </div>
   </header>
+  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией LineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <section class="prose card"><h2>Что означает {p['name'].lower()}</h2><p>{p['general']}</p></section>
   <h2>Как читать {p['name'].lower().replace('линия','линию',1)}</h2>
   <div class="entry-grid">{variants}</div>
@@ -787,10 +792,18 @@ def about():
   <div class="card"><h3>Канал</h3><p>Каждое утро — карта Таро, руна и гороскоп для всех знаков зодиака.</p><p><a href="{CHANNEL}">Подписаться →</a> · <a href="{VK}">Группа ВКонтакте →</a> · <a href="{PINTEREST}">Pinterest →</a></p></div>
   <div class="card"><h3>Справочник</h3><p>Значения всех 78 карт Таро, 24 рун Старшего Футарка и главных линий на ладони.</p><p><a href="/taro/">Перейти →</a></p></div>
 </div>
-<section class="card">
+<section class="card" id="metodika">
   <h2>На чём основаны толкования</h2>
   <p>Значения карт Таро приведены по традиции колоды Райдера — Уэйта, руны — по Старшему Футарку, линии ладони — по классической европейской хиромантии. Все тексты на сайте написаны специально для LineLife.</p>
   <p>Мы не пугаем и не обещаем: каждое толкование — это повод посмотреть на ситуацию с новой стороны, а не прогноз будущего.</p>
+  <h3>Как мы готовим материалы</h3>
+  <ul>
+    <li>Берём классические источники: систему Райдера — Уэйта для Таро, Старший Футарк для рун, европейскую хиромантию для линий руки.</li>
+    <li>Для каждой карты, руны и линии пишем значение, перевёрнутое положение, любовь, работу, совет и ответ «да или нет».</li>
+    <li>Отвечаем на вопрос в первых строках страницы, подробности ниже.</li>
+    <li>Проверяем тексты на единый стиль и обновляем страницы, когда добавляем новое.</li>
+    <li>Не даём прогнозов о здоровье, деньгах и судьбе и прямо пишем, что это развлечение.</li>
+  </ul>
 </section>
 <section class="card">
   <h2>Важно знать</h2>
