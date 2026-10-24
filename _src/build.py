@@ -9,7 +9,7 @@ from data_palm import PALM
 from data_minor import MINOR, SUITS
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-SITE = "https://mylinelife.github.io"
+SITE = "https://mylinelife.ru"
 BOT = "https://t.me/mylinelife_bot"
 CHANNEL = "https://t.me/linelife_daily"
 VK = "https://vk.ru/linelife_daily"
@@ -650,7 +650,7 @@ def privacy():
 <p>Оператор может изменять Политику. Актуальная редакция всегда доступна по адресу {SITE}/privacy.html.</p>
 </article>"""
     page(url, "Политика обработки персональных данных — LineLife",
-         "Политика обработки персональных данных пользователей Telegram-бота LineLife (@mylinelife_bot) и сайта mylinelife.github.io.",
+         "Политика обработки персональных данных пользователей Telegram-бота LineLife (@mylinelife_bot) и сайта mylinelife.ru.",
          body, [crumbs_ld(cr)], og_type="website", priority="0.3", freq="yearly")
 
 
@@ -826,6 +826,7 @@ def sitemap():
         xs.append(f"  <url><loc>{SITE}{u}</loc><lastmod>{TODAY}</lastmod><changefreq>{fr}</changefreq><priority>{pr}</priority></url>")
     xs.append("</urlset>")
     write("/sitemap.xml", "\n".join(xs) + "\n")
+    write("/CNAME", SITE.replace("https://", "") + "\n")
     write("/robots.txt", f"User-agent: *\nAllow: /\nDisallow: /404.html\n\nSitemap: {SITE}/sitemap.xml\n")
 
 

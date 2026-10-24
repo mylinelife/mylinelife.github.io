@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /404.html
 
-Sitemap: https://mylinelife.github.io/sitemap.xml
+Sitemap: https://mylinelife.ru/sitemap.xml
