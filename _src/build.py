@@ -6,6 +6,11 @@ sys.path.insert(0, os.path.dirname(__file__))
 from data_tarot import TAROT
 from data_runes import RUNES
 from data_palm import PALM
+from data_runes_extra1 import EXTRA1
+from data_runes_extra2 import EXTRA2
+from data_runes_extra3 import PRACTICE
+RUNE_X = {**EXTRA1, **EXTRA2}
+from data_hubs_extra import SUIT_X, RUNES_HUB_X, PALM_X
 from data_minor import MINOR, SUITS
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -16,7 +21,7 @@ VK = "https://vk.ru/linelife_daily"
 PINTEREST = "https://ru.pinterest.com/mylinelife_bot/"
 TODAY = "2026-10-24"
 TODAY_RU = "24 октября 2026"
-CSS_V = "11"
+CSS_V = "14"
 E = html.escape
 pages = []  # (path, priority, changefreq)
 
@@ -80,8 +85,23 @@ def article_ld(title, desc, url):
                           "logo": {"@type": "ImageObject", "url": SITE + "/assets/icon-512.png"}}}
 
 
+def img_for(url):
+    parts = url.strip("/").split("/")
+    if len(parts) == 2:
+        rel = f"assets/img/{parts[0]}/{parts[1]}.jpg"
+        if os.path.exists(os.path.join(ROOT, rel)):
+            return "/" + rel
+    return None
+
+
 def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", freq="monthly", robots="index, follow", sitemap=True):
     canon = SITE + url
+    pimg = img_for(url) if og_type == "article" else None
+    if pimg:
+        alt = title.split(" | ")[0].split(" — ")[0]
+        fig = f'<figure class="shot"><img src="{pimg}" width="1200" height="630" loading="lazy" alt="{E(alt)} — иллюстрация LineLife"></figure>'
+        body = body.replace("</article>", fig + "</article>", 1)
+        graph = [dict(g, image=SITE + pimg) if g.get("@type") == "Article" else g for g in graph]
     gr = {"@context": "https://schema.org", "@graph": list(graph)} if graph else None
     out = f"""<!doctype html>
 <html lang="ru">
@@ -99,7 +119,7 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
 <meta property="og:title" content="{E(title)}">
 <meta property="og:description" content="{E(desc)}">
 <meta property="og:url" content="{canon}">
-<meta property="og:image" content="{SITE}/assets/og.png">
+<meta property="og:image" content="{SITE + pimg if pimg else SITE + '/assets/og.png'}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -109,9 +129,8 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/manrope-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/cormorant-garamond-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/style.css?v={CSS_V}">
 {ld(gr) if gr else ""}
 </head>
@@ -274,11 +293,14 @@ def tarot_pages():
   <p class="lead">{s['intro']}</p>
 </section>
 <section><div class="grid tiles">{''.join(tile(c, c['num']) for c in deck)}</div></section>
+<section class="prose card"><h2>Числовые карты масти {s['gen']}</h2><p>{SUIT_X[s['slug']]['numbers']}</p></section>
+<section class="prose card"><h2>Придворные карты масти {s['gen']}</h2><p>{SUIT_X[s['slug']]['courts']}</p></section>
+<section class="prose card"><h2>Масть {s['gen']} в раскладе</h2><p>{SUIT_X[s['slug']]['spread']}</p></section>
 {cta("Задай вопрос картам", "Расклад Таро на любовь, работу или выбор — в боте LineLife. Карта дня бесплатно каждое утро.", f"seo_taro_{s['slug']}", "🎴 Сделать расклад")}
 {faq_html(qa)}
 <section><h2>Другие масти и старшие арканы</h2><div class="chips">{others}<a class="chip" href="/taro/">Старшие арканы</a></div></section>"""
         page(hub, f"Масть {s['gen']} в Таро: значение всех 14 карт — LineLife",
-             f"Значение карт масти {s['gen']} в Таро: от Туза до Короля. Темы масти — {s['theme']}. Прямое и перевёрнутое положение, любовь и работа.",
+             f"Значение карт масти {s['gen']} в Таро: от Туза до Короля. Темы масти — {s['theme']}. Любовь, работа, совет.",
              body, [crumbs_ld(cr), faq_ld(qa), {"@type": "CollectionPage", "name": f"Масть {s['gen']}", "url": SITE + hub, "inLanguage": "ru"}],
              og_type="website", priority="0.8", freq="monthly")
 
@@ -324,6 +346,9 @@ el.innerHTML='<div class="daily-in"><div class="eyebrow">Карта дня · '+
 
 
 # ---------------- РУНЫ ----------------
+RUNE_BY = {r["slug"]: r for r in RUNES}
+
+
 def rune_pages():
     n = len(RUNES)
     for i, r in enumerate(RUNES):
@@ -336,6 +361,10 @@ def rune_pages():
         qa = [(f"Что означает руна {r['name']}?", r["general"]),
               (f"Что значит перевёрнутая руна {r['name']}?", revtxt),
               (f"Что означает руна {r['name']} в любви?", r["love"])]
+        x = RUNE_X[r["slug"]]
+        qa += [(f"Руна {r['name']}: да или нет?", x["yesno"]),
+               (f"Как читать руну {r['name']} в раскладе?", x["spread"])]
+        combos_html = "".join(f'<li><a href="/runy/{cs}/">{RUNE_BY[cs]["sym"]} {RUNE_BY[cs]["name"]}</a> — {ct}</li>' for cs, ct in x["combos"])
         cr = [("Главная", "/"), ("Значения рун", "/runy/"), (r["name"], url)]
         others = ''.join(f'<a class="chip" href="/runy/{t["slug"]}/"><b>{t["sym"]}</b> {t["name"]}</a>' for t in RUNES if t is not r)
         body = f"""{breadcrumbs(cr)}
@@ -356,6 +385,11 @@ def rune_pages():
     <section class="card"><h2>Руна {r['name']} в работе</h2><p>{r['work']}</p></section>
     <section class="card"><h2>Совет руны</h2><p>{r['advice']}</p></section>
   </div>
+  <section class="prose card"><h2>Название и происхождение руны {r['name']}</h2><p>{x['origin']}</p></section>
+  <section class="prose card"><h2>Руна {r['name']} в раскладе</h2><p>{x['spread']}</p></section>
+  <section class="prose card"><h2>Сочетания руны {r['name']} с другими рунами</h2><ul class="combos">{combos_html}</ul></section>
+  <section class="prose card"><h2>Руна {r['name']}: да или нет</h2><p>{x['yesno']}</p></section>
+  <section class="prose card"><h2>Руна {r['name']} как руна дня: практика</h2><p>{PRACTICE[r['slug']]}</p></section>
   <p class="muted">Толкование дано по традиции Старшего Футарка и носит развлекательный характер.</p>
 </article>
 {cta(f"Какая руна выпадет тебе сегодня?", "Руна дня бесплатно каждое утро и расклады на рунах — в боте LineLife.", f"seo_runa_{r['slug']}", "ᚠ Вытянуть руну")}
@@ -417,6 +451,10 @@ def rune_pages():
 <p class="chips"><a class="chip" href="/runy/runa-dnya/">ᚠ Руна дня на сегодня: гадание на рунах онлайн →</a></p>
 {groups}
 <section><a class="card tile" href="/runy/odin/"><span class="rs">◯</span><h3>Пустая руна (руна Одина)</h3><p>Современное дополнение к набору</p></a></section>
+<section class="prose card"><h2>История Старшего Футарка</h2><p>{RUNES_HUB_X['history']}</p></section>
+<section class="prose card"><h2>Три эттира и их смысл</h2><p>{RUNES_HUB_X['aetts']}</p></section>
+<section class="prose card"><h2>Простые расклады на рунах</h2><p>{RUNES_HUB_X['spreads']}</p></section>
+<section class="prose card"><h2>Частые ошибки новичков</h2><p>{RUNES_HUB_X['mistakes']}</p></section>
 <section class="prose card">
   <h2>Как читать руны</h2>
   <p>Руна, выпавшая прямо, показывает своё основное значение. Перевёрнутая — ослабленное или противоположное. Девять рун симметричны и переворачиваться не могут. Самый простой расклад — одна руна на день или на вопрос: она подсказывает настроение и совет.</p>
@@ -430,6 +468,14 @@ def rune_pages():
 
 
 # ---------------- ХИРОМАНТИЯ ----------------
+def palm_extra(p):
+    x = PALM_X.get(p["slug"])
+    if not x:
+        return ""
+    return (f'<section class="prose card"><h2>{p["name"]} и другие линии на ладони</h2><p>{x["relation"]}</p></section>'
+            f'<section class="prose card"><h2>Типичные ошибки при чтении: {p["name"].lower()}</h2><p>{x["mistakes"]}</p></section>')
+
+
 def palm_pages():
     for p in PALM:
         url = f"/hiromantiya/{p['slug']}/"
@@ -453,6 +499,7 @@ def palm_pages():
   <section class="prose card"><h2>Что означает {p['name'].lower()}</h2><p>{p['general']}</p></section>
   <h2>Как читать {p['name'].lower().replace('линия','линию',1)}</h2>
   <div class="entry-grid">{variants}</div>
+  {palm_extra(p)}
   <p class="muted">Хиромантия — традиция толкования линий руки, а не научный метод. Толкования приведены в развлекательных целях.</p>
 </article>
 {cta(f"Что говорит твоя {p['name'].lower()}?", "Пришли фото ладони в бот LineLife — и получи разбор линий прямо в Telegram.", f"seo_palm_{p['slug']}", "🖐 Прочитать мою ладонь")}
