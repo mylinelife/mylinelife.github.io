@@ -133,6 +133,18 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
 <link rel="preload" href="/assets/fonts/cormorant-garamond-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/style.css?v={CSS_V}">
 {ld(gr) if gr else ""}
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){{
+        m[i]=m[i]||function(){{(m[i].a=m[i].a||[]).push(arguments)}};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {{if (document.scripts[j].src === r) {{ return; }}}}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    }})(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113777002', 'ym');
+    ym(113777002, 'init', {{ssr:true, clickmap:true, referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true}});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/113777002" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
 </head>
 <body>
 <div class="wrap">
@@ -640,7 +652,7 @@ def privacy():
     body = f"""{breadcrumbs(cr)}
 <article class="prose legal">
 <h1>Политика обработки персональных данных</h1>
-<p class="muted">Редакция от 18 октября 2026 года</p>
+<p class="muted">Редакция от 25 октября 2026 года</p>
 
 <h2>1. Общие положения</h2>
 <p>Настоящая Политика определяет порядок обработки и защиты персональных данных пользователей Telegram-бота LineLife (@mylinelife_bot, далее — «Бот») и сайта {SITE} (далее — «Сайт») в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных».</p>
@@ -683,6 +695,7 @@ def privacy():
 <li>сервису «Мой налог» — для формирования чеков;</li>
 <li>в случаях, прямо предусмотренных законодательством РФ.</li>
 </ul>
+<p>Сайт использует сервис веб-аналитики «Яндекс Метрика» (ООО «Яндекс»): он собирает обезличенные данные о посещениях (страницы, источник перехода, тип устройства) с помощью файлов cookie. Отключить cookie можно в настройках браузера, отказаться от сбора данных — через <a href="https://yandex.ru/support/metrica/general/opt-out.html" rel="noopener">страницу отказа Яндекса</a>.</p>
 
 <h2>8. Права пользователя</h2>
 <p>Пользователь вправе получить сведения об обработке своих данных, потребовать их уточнения или удаления, отозвать согласие и отказаться от рассылки. Для этого достаточно написать на <a href="mailto:anikeevmaksim@yandex.ru">anikeevmaksim@yandex.ru</a> или отключить рассылку в настройках Бота. Запрос рассматривается в течение 10 рабочих дней.</p>
