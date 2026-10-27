@@ -4,6 +4,13 @@
 import json, os, sys, html
 sys.path.insert(0, os.path.dirname(__file__))
 from data_tarot import TAROT
+MORE = {}
+for _n in ('data_tarot_more1', 'data_tarot_more2', 'data_tarot_more3', 'data_tarot_more4', 'data_tarot_more5'):
+    try:
+        _mod = __import__(_n)
+        MORE.update(getattr(_mod, 'MORE' + _n[-1], {}))
+    except ImportError:
+        pass
 from data_runes import RUNES
 from data_palm import PALM
 from data_runes_extra1 import EXTRA1
@@ -235,6 +242,14 @@ def palm_svg(highlight=None, size_class="palm-svg"):
 
 
 # ---------------- ТАРО ----------------
+def more_html(c, mo):
+    if not mo:
+        return ""
+    return (f'<section class="prose card"><h2>{c["name"]} как человек или ситуация</h2><p>{mo["person"]}</p></section>'
+            f'<section class="prose card"><h2>{c["name"]} как карта дня</h2><p>{mo["day"]}</p></section>'
+            f'<section class="prose card"><h2>Сочетания карты {c["name"]}</h2><p>{mo["combo"]}</p></section>')
+
+
 def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hub_label, sigil_top):
     n = len(deck)
     url = f"/taro/{c['slug']}/"
@@ -246,6 +261,9 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
           (f"Что значит перевёрнутая карта {c['name']}?", c["reversed"]),
           (f"Что означает {c['name']} в любви и отношениях?", c["love"]),
           (f"{c['name']}: да или нет?", f"В раскладе «да или нет» карта {c['name']} обычно трактуется как «{c['yesno']}».")]
+    mo = MORE.get(c['slug'])
+    if mo:
+        qa += list(mo['faq'])
     cr = [("Главная", "/"), ("Значения карт Таро", "/taro/")] + crumbs_mid + [(c["name"], url)]
     chips = ''.join(f'<a class="chip" href="/taro/{t["slug"]}/">{t["name"]}</a>' for t in others if t is not c)
     body = f"""{breadcrumbs(cr)}
@@ -267,6 +285,7 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
     <section class="card"><h2>Совет карты</h2><p>{c['advice']}</p></section>
     <section class="card yes"><h2>{c['name']}: да или нет</h2><p class="big">{c['yesno']}</p><p>Ответ зависит от вопроса и соседних карт в раскладе.</p></section>
   </div>
+  {more_html(c, mo)}
   <p class="muted">Значение карты в конкретном раскладе зависит от вопроса и позиции. Описание приведено по традиции колоды Райдера — Уэйта и носит развлекательный характер.</p>
 </article>
 {cta(f"Выпадет ли тебе {c['name']}?", "Задай свой вопрос в боте LineLife и получи расклад Таро прямо в Telegram.", f"seo_taro_{c['slug']}", "🎴 Сделать расклад")}
