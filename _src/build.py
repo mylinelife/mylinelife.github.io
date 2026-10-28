@@ -644,9 +644,9 @@ def home():
 {faq_html(qa)}
 {cta("Что скажет твоя ладонь?", "Открой бота — первая карта дня уже ждёт тебя.", "site_footer_cta", "🖐 Открыть LineLife в Telegram")}
 {daily_script()}"""
-    graph = [{"@type": "WebSite", "name": "LineLife", "alternateName": "Лайнлайф", "url": SITE + "/", "inLanguage": "ru"},
-             {"@type": "Organization", "name": "LineLife", "url": SITE + "/", "logo": SITE + "/assets/icon-512.png",
-              "sameAs": [BOT, CHANNEL, VK, PINTEREST]},
+    graph = [{"@type": "WebSite", "name": "LineLife", "alternateName": ["mylinelife", "MyLineLife", "mylinelife.ru", "Лайнлайф"], "url": SITE + "/", "inLanguage": "ru"},
+             {"@type": "Organization", "name": "LineLife", "alternateName": ["mylinelife", "MyLineLife", "mylinelife.ru"], "url": SITE + "/", "logo": SITE + "/assets/icon-512.png",
+              "sameAs": [BOT, CHANNEL, VK, PINTEREST, "https://dzen.ru/id/6ad4d6414cf8164d988038d2"]},
              faq_ld(qa)]
     page("/", "Гадание по ладони по фото онлайн, Таро и руны — LineLife",
          "Гадание по ладони по фото, на Таро и рунах онлайн бесплатно в Telegram: сфотографируй руку и узнай, что говорят линии. Карта дня и руна дня. 18+",
