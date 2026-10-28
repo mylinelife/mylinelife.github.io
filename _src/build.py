@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Сборщик сайта LineLife. Запуск: python3 _src/build.py (из корня репозитория).
+"""Сборщик сайта MyLineLife. Запуск: python3 _src/build.py (из корня репозитория).
 Генерирует HTML-страницы, sitemap.xml, robots.txt, 404.html и общий CSS."""
 import json, os, sys, html
 sys.path.insert(0, os.path.dirname(__file__))
@@ -50,7 +50,7 @@ def pin_block(url):
         return ""
     name, alt = PINS[url]
     return f"""<section class="pin-block card">
-  <img src="/assets/pins/{name}.jpg" width="500" height="750" loading="lazy" alt="{E(alt)}" data-pin-description="{E(alt)} — LineLife">
+  <img src="/assets/pins/{name}.jpg" width="500" height="750" loading="lazy" alt="{E(alt)}" data-pin-description="{E(alt)} — MyLineLife">
   <div><h2>Шпаргалка</h2><p>Сохрани картинку себе в Pinterest или на телефон, чтобы она была под рукой.</p>
   <p><a class="btn btn-ghost btn-sm" href="https://www.pinterest.com/pin/create/button/?url={SITE}{url}&amp;media={SITE}/assets/pins/{name}.jpg&amp;description={E(alt)}" target="_blank" rel="noopener">Сохранить в Pinterest</a></p></div>
 </section>"""
@@ -87,8 +87,8 @@ def article_ld(title, desc, url):
     return {"@type": "Article", "headline": title, "description": desc, "inLanguage": "ru",
             "datePublished": TODAY, "dateModified": TODAY, "mainEntityOfPage": SITE + url,
             "image": SITE + "/assets/og.png",
-            "author": {"@type": "Organization", "name": "LineLife", "url": SITE + "/"},
-            "publisher": {"@type": "Organization", "name": "LineLife",
+            "author": {"@type": "Organization", "name": "MyLineLife", "url": SITE + "/"},
+            "publisher": {"@type": "Organization", "name": "MyLineLife",
                           "logo": {"@type": "ImageObject", "url": SITE + "/assets/icon-512.png"}}}
 
 
@@ -106,7 +106,7 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
     pimg = img_for(url) if og_type == "article" else None
     if pimg:
         alt = title.split(" | ")[0].split(" — ")[0]
-        fig = f'<figure class="shot"><img src="{pimg}" width="1200" height="630" loading="lazy" alt="{E(alt)} — иллюстрация LineLife"></figure>'
+        fig = f'<figure class="shot"><img src="{pimg}" width="1200" height="630" loading="lazy" alt="{E(alt)} — иллюстрация MyLineLife"></figure>'
         body = body.replace("</article>", fig + "</article>", 1)
         graph = [dict(g, image=SITE + pimg) if g.get("@type") == "Article" else g for g in graph]
     gr = {"@context": "https://schema.org", "@graph": list(graph)} if graph else None
@@ -122,7 +122,7 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
 <meta name="robots" content="{robots}">
 <meta property="og:type" content="{og_type}">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:site_name" content="LineLife">
+<meta property="og:site_name" content="MyLineLife">
 <meta property="og:title" content="{E(title)}">
 <meta property="og:description" content="{E(desc)}">
 <meta property="og:url" content="{canon}">
@@ -157,7 +157,7 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
 <body>
 <div class="wrap">
 <header class="top">
-  <a class="logo" href="/">Line<span>Life</span></a>
+  <a class="logo" href="/">MyLine<span>Life</span></a>
   <nav class="nav" aria-label="Разделы">
     <a href="/taro/">Таро</a><a href="/runy/">Руны</a><a href="/hiromantiya/">Хиромантия</a>
   </nav>
@@ -172,10 +172,10 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
     <div><b>Таро</b><a href="/taro/">Значения карт</a><a href="/taro/{TAROT[0]['slug']}/">Шут</a><a href="/taro/smert/">Смерть</a><a href="/taro/zhezly/">Масть Жезлов</a><a href="/taro/kubki/">Масть Кубков</a><a href="/taro/mechi/">Масть Мечей</a><a href="/taro/pentakli/">Масть Пентаклей</a></div>
     <div><b>Руны</b><a href="/runy/">Значения рун</a><a href="/runy/fehu/">Феху</a><a href="/runy/algiz/">Альгиз</a><a href="/runy/gebo/">Гебо</a><a href="/runy/odin/">Руна Одина</a></div>
     <div><b>Хиромантия</b><a href="/hiromantiya/">Линии на руке</a>{''.join(f'<a href="/hiromantiya/{p["slug"]}/">{p["name"]}</a>' for p in PALM)}</div>
-    <div><b>LineLife</b><a href="{bot('site_footer')}">Бот в Telegram</a><a href="{CHANNEL}">Канал с картой дня</a><a href="{VK}">Группа ВКонтакте</a><a href="{PINTEREST}">Pinterest</a><a href="/o-proekte/">О проекте</a><a href="/privacy.html">Политика конфиденциальности</a></div>
+    <div><b>MyLineLife</b><a href="{bot('site_footer')}">Бот в Telegram</a><a href="{CHANNEL}">Канал с картой дня</a><a href="{VK}">Группа ВКонтакте</a><a href="{PINTEREST}">Pinterest</a><a href="/o-proekte/">О проекте</a><a href="/privacy.html">Политика конфиденциальности</a></div>
   </nav>
-  <p class="disc"><span class="age">18+</span> LineLife — развлекательный сервис. Материалы сайта и бота не являются предсказанием, медицинской, психологической, юридической или финансовой консультацией.</p>
-  <p class="disc">© 2026 LineLife</p>
+  <p class="disc"><span class="age">18+</span> MyLineLife — развлекательный сервис. Материалы сайта и бота не являются предсказанием, медицинской, психологической, юридической или финансовой консультацией.</p>
+  <p class="disc">© 2026 MyLineLife</p>
 </footer>
 </div>
 </body>
@@ -196,7 +196,7 @@ def breadcrumbs(items):
     return '<nav class="crumbs" aria-label="Навигация">' + ' <span class="sep">/</span> '.join(parts) + '</nav>'
 
 
-def cta(title, text, src, label="🔮 Открыть LineLife в Telegram"):
+def cta(title, text, src, label="🔮 Открыть MyLineLife в Telegram"):
     return f"""<aside class="final">
   <h2>{title}</h2>
   <p>{text}</p>
@@ -253,7 +253,7 @@ def more_html(c, mo):
 def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hub_label, sigil_top):
     n = len(deck)
     url = f"/taro/{c['slug']}/"
-    title = f"{c['name']}: значение карты Таро в любви | LineLife"
+    title = f"{c['name']}: значение карты Таро в любви | MyLineLife"
     desc = f"Значение карты {c['name']} в Таро: {', '.join(c['kw'][:3])}. Прямое и перевёрнутое положение, любовь, работа, совет и ответ «да или нет»."
     h1 = f"Карта Таро {c['name']}: значение и толкование"
     prev = deck[(i - 1) % n]; nxt = deck[(i + 1) % n]
@@ -277,7 +277,7 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
       <ul class="kw">{''.join(f'<li>{k}</li>' for k in c['kw'])}</ul>
     </div>
   </header>
-  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией LineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
+  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <div class="entry-grid">
     <section class="card"><h2>Перевёрнутая карта {c['name']}</h2><p>{c['reversed']}</p></section>
     <section class="card"><h2>{c['name']} в любви и отношениях</h2><p>{c['love']}</p></section>
@@ -288,7 +288,7 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
   {more_html(c, mo)}
   <p class="muted">Значение карты в конкретном раскладе зависит от вопроса и позиции. Описание приведено по традиции колоды Райдера — Уэйта и носит развлекательный характер.</p>
 </article>
-{cta(f"Выпадет ли тебе {c['name']}?", "Задай свой вопрос в боте LineLife и получи расклад Таро прямо в Telegram.", f"seo_taro_{c['slug']}", "🎴 Сделать расклад")}
+{cta(f"Выпадет ли тебе {c['name']}?", "Задай свой вопрос в боте MyLineLife и получи расклад Таро прямо в Telegram.", f"seo_taro_{c['slug']}", "🎴 Сделать расклад")}
 <nav class="pager" aria-label="Соседние карты">
   <a href="/taro/{prev['slug']}/">← {prev['name']}</a>
   <a href="{hub_url}">{hub_label}</a>
@@ -328,10 +328,10 @@ def tarot_pages():
 <section class="prose card"><h2>Числовые карты масти {s['gen']}</h2><p>{SUIT_X[s['slug']]['numbers']}</p></section>
 <section class="prose card"><h2>Придворные карты масти {s['gen']}</h2><p>{SUIT_X[s['slug']]['courts']}</p></section>
 <section class="prose card"><h2>Масть {s['gen']} в раскладе</h2><p>{SUIT_X[s['slug']]['spread']}</p></section>
-{cta("Задай вопрос картам", "Расклад Таро на любовь, работу или выбор — в боте LineLife. Карта дня бесплатно каждое утро.", f"seo_taro_{s['slug']}", "🎴 Сделать расклад")}
+{cta("Задай вопрос картам", "Расклад Таро на любовь, работу или выбор — в боте MyLineLife. Карта дня бесплатно каждое утро.", f"seo_taro_{s['slug']}", "🎴 Сделать расклад")}
 {faq_html(qa)}
 <section><h2>Другие масти и старшие арканы</h2><div class="chips">{others}<a class="chip" href="/taro/">Старшие арканы</a></div></section>"""
-        page(hub, f"Масть {s['gen']} в Таро: значение всех 14 карт — LineLife",
+        page(hub, f"Масть {s['gen']} в Таро: значение всех 14 карт — MyLineLife",
              f"Значение карт масти {s['gen']} в Таро: от Туза до Короля. Темы масти — {s['theme']}. Любовь, работа, совет.",
              body, [crumbs_ld(cr), faq_ld(qa), {"@type": "CollectionPage", "name": f"Масть {s['gen']}", "url": SITE + hub, "inLanguage": "ru"}],
              og_type="website", priority="0.8", freq="monthly")
@@ -359,10 +359,10 @@ def tarot_pages():
   <p>Каждая карта несёт несколько слоёв смысла. Прямое положение показывает основное значение, перевёрнутое — его ослабленную, задержанную или искажённую форму. В раскладе важна и позиция: одна и та же карта по-разному звучит в позиции «прошлое», «препятствие» или «совет».</p>
   <p>Если в раскладе много старших арканов, ситуация воспринимается как значимая. Преобладание одной масти подсказывает сферу: Жезлы — дела и энергия, Кубки — чувства, Мечи — мысли и конфликты, Пентакли — деньги и материальное. Помни, что Таро — это повод взглянуть на ситуацию по-новому, а не готовый ответ.</p>
 </section>
-{cta("Задай свой вопрос картам", "Расклад Таро на любовь, работу или выбор — в боте LineLife. Карта дня бесплатно каждое утро.", "seo_taro_hub", "🎴 Сделать расклад")}
+{cta("Задай свой вопрос картам", "Расклад Таро на любовь, работу или выбор — в боте MyLineLife. Карта дня бесплатно каждое утро.", "seo_taro_hub", "🎴 Сделать расклад")}
 {faq_html(qa)}
 {daily_script()}"""
-    page(url, "Значение карт Таро: все 78 карт с толкованием — LineLife",
+    page(url, "Значение карт Таро: все 78 карт с толкованием — MyLineLife",
          "Справочник значений всех 78 карт Таро: старшие арканы и масти Жезлов, Кубков, Мечей и Пентаклей. Прямое и перевёрнутое положение, любовь, работа, «да или нет».",
          body, [crumbs_ld(cr), faq_ld(qa), {"@type": "CollectionPage", "name": "Значение карт Таро", "url": SITE + url, "inLanguage": "ru"}],
          og_type="website", priority="0.9", freq="weekly")
@@ -385,7 +385,7 @@ def rune_pages():
     n = len(RUNES)
     for i, r in enumerate(RUNES):
         url = f"/runy/{r['slug']}/"
-        title = f"Руна {r['name']} ({r['sym']}): значение, перевёрнутая, в любви — LineLife"
+        title = f"Руна {r['name']} ({r['sym']}): значение, перевёрнутая, в любви — MyLineLife"
         desc = f"Значение руны {r['name']} {r['sym']} — «{r['meaning']}»: {', '.join(r['kw'][:3])}. Прямое{' и перевёрнутое' if r['rev'] else ''} положение, любовь, работа и совет руны."
         h1 = f"Руна {r['name']}: значение и толкование"
         prev = RUNES[(i - 1) % n]; nxt = RUNES[(i + 1) % n]
@@ -410,7 +410,7 @@ def rune_pages():
       <ul class="kw"><li>«{r['meaning']}»</li>{''.join(f'<li>{k}</li>' for k in r['kw'])}</ul>
     </div>
   </header>
-  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией LineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
+  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <div class="entry-grid">
     <section class="card"><h2>{'Перевёрнутая руна ' + r['name'] if r['rev'] else 'Перевёрнутое положение'}</h2><p>{revtxt}</p></section>
     <section class="card"><h2>Руна {r['name']} в любви</h2><p>{r['love']}</p></section>
@@ -424,7 +424,7 @@ def rune_pages():
   <section class="prose card"><h2>Руна {r['name']} как руна дня: практика</h2><p>{PRACTICE[r['slug']]}</p></section>
   <p class="muted">Толкование дано по традиции Старшего Футарка и носит развлекательный характер.</p>
 </article>
-{cta(f"Какая руна выпадет тебе сегодня?", "Руна дня бесплатно каждое утро и расклады на рунах — в боте LineLife.", f"seo_runa_{r['slug']}", "ᚠ Вытянуть руну")}
+{cta(f"Какая руна выпадет тебе сегодня?", "Руна дня бесплатно каждое утро и расклады на рунах — в боте MyLineLife.", f"seo_runa_{r['slug']}", "ᚠ Вытянуть руну")}
 <nav class="pager" aria-label="Соседние руны">
   <a href="/runy/{prev['slug']}/">← {prev['name']}</a>
   <a href="/runy/">Все руны</a>
@@ -451,16 +451,16 @@ def rune_pages():
       <ul class="kw"><li>неизвестность</li><li>судьба</li><li>доверие</li><li>чистый лист</li></ul>
     </div>
   </header>
-  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией LineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
+  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <div class="entry-grid">
     <section class="card"><h2>Откуда она взялась</h2><p>В исторических рунических рядах пустой руны нет: её добавили в XX веке. Поэтому одни гадающие убирают её из набора, а другие считают важным знаком.</p></section>
     <section class="card"><h2>Как её читают</h2><p>Если пустая руна выпала в раскладе, её трактуют как знак, что ответ пока скрыт, а исход зависит от решений, которые ещё не приняты.</p></section>
     <section class="card"><h2>Совет</h2><p>Отпусти желание всё контролировать. Ситуация ещё не сложилась, и в этом её свобода.</p></section>
   </div>
 </article>
-{cta("Вытяни свою руну дня", "Руна дня бесплатно каждое утро — в боте LineLife.", "seo_runa_odin", "ᚠ Вытянуть руну")}
+{cta("Вытяни свою руну дня", "Руна дня бесплатно каждое утро — в боте MyLineLife.", "seo_runa_odin", "ᚠ Вытянуть руну")}
 {faq_html(qa)}"""
-    page(url, "Пустая руна (руна Одина): значение в раскладе — LineLife",
+    page(url, "Пустая руна (руна Одина): значение в раскладе — MyLineLife",
          "Что означает пустая руна Одина: откуда она взялась, как её трактуют в раскладе и стоит ли её использовать.",
          body, [article_ld("Пустая руна (руна Одина): значение", "Значение пустой руны Одина", url), crumbs_ld(cr), faq_ld(qa)], priority="0.6")
 
@@ -491,9 +491,9 @@ def rune_pages():
   <h2>Как читать руны</h2>
   <p>Руна, выпавшая прямо, показывает своё основное значение. Перевёрнутая — ослабленное или противоположное. Девять рун симметричны и переворачиваться не могут. Самый простой расклад — одна руна на день или на вопрос: она подсказывает настроение и совет.</p>
 </section>
-{cta("Руна дня ждёт тебя", "Руна дня бесплатно каждое утро и расклады на рунах — в боте LineLife.", "seo_runy_hub", "ᚠ Вытянуть руну")}
+{cta("Руна дня ждёт тебя", "Руна дня бесплатно каждое утро и расклады на рунах — в боте MyLineLife.", "seo_runy_hub", "ᚠ Вытянуть руну")}
 {faq_html(qa)}"""
-    page(url, "Руны и их значение: все 24 руны Старшего Футарка | LineLife",
+    page(url, "Руны и их значение: все 24 руны Старшего Футарка | MyLineLife",
          "Руны и их значение: описание всех 24 рун Старшего Футарка, прямое и перевёрнутое положение, любовь, работа. Гадание на рунах онлайн и руна дня бесплатно.",
          body, [crumbs_ld(cr), faq_ld(qa), {"@type": "CollectionPage", "name": "Значение рун", "url": SITE + url, "inLanguage": "ru"}],
          og_type="website", priority="0.9", freq="weekly")
@@ -511,7 +511,7 @@ def palm_extra(p):
 def palm_pages():
     for p in PALM:
         url = f"/hiromantiya/{p['slug']}/"
-        title = f"{p['name']} на руке: значение, где находится, виды — LineLife"
+        title = f"{p['name']} на руке: значение, где находится, виды — MyLineLife"
         desc = f"{p['name']} на ладони: где находится и как её читать в хиромантии. Длинная, короткая, прерывистая, раздвоенная — значения с примерами."
         h1 = f"{p['name']} на руке: где находится и что означает"
         cr = [("Главная", "/"), ("Хиромантия", "/hiromantiya/"), (p["name"], url)]
@@ -527,14 +527,14 @@ def palm_pages():
       <p class="lead">{p['where']}</p>
     </div>
   </header>
-  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией LineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
+  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <section class="prose card"><h2>Что означает {p['name'].lower()}</h2><p>{p['general']}</p></section>
   <h2>Как читать {p['name'].lower().replace('линия','линию',1)}</h2>
   <div class="entry-grid">{variants}</div>
   {palm_extra(p)}
   <p class="muted">Хиромантия — традиция толкования линий руки, а не научный метод. Толкования приведены в развлекательных целях.</p>
 </article>
-{cta(f"Что говорит твоя {p['name'].lower()}?", "Пришли фото ладони в бот LineLife — и получи разбор линий прямо в Telegram.", f"seo_palm_{p['slug']}", "🖐 Прочитать мою ладонь")}
+{cta(f"Что говорит твоя {p['name'].lower()}?", "Пришли фото ладони в бот MyLineLife — и получи разбор линий прямо в Telegram.", f"seo_palm_{p['slug']}", "🖐 Прочитать мою ладонь")}
 {faq_html(p['faq'])}
 <section><h2>Другие линии на ладони</h2><div class="chips">{others}</div></section>"""
         page(url, title, desc, body, [article_ld(h1, desc, url), crumbs_ld(cr), faq_ld(p["faq"])], priority="0.8")
@@ -567,9 +567,9 @@ def palm_pages():
     <li>Проверь, что линии чётко видны, и отправь фото в бот.</li>
   </ol>
 </section>
-{cta("Гадание по ладони по фото", "Пришли фото ладони в бот LineLife — и получи разбор основных линий прямо в Telegram.", "seo_palm_hub", "🖐 Прочитать мою ладонь")}
+{cta("Гадание по ладони по фото", "Пришли фото ладони в бот MyLineLife — и получи разбор основных линий прямо в Telegram.", "seo_palm_hub", "🖐 Прочитать мою ладонь")}
 {faq_html(qa)}"""
-    page(url, "Линии на руке и их значение: хиромантия по ладони | LineLife",
+    page(url, "Линии на руке и их значение: хиромантия по ладони | MyLineLife",
          "Хиромантия для начинающих: линия жизни, сердца, головы и судьбы — где находятся и что означают. Гадание по ладони по фото в Telegram.",
          body, [crumbs_ld(cr), faq_ld(qa), {"@type": "CollectionPage", "name": "Хиромантия", "url": SITE + url, "inLanguage": "ru"}],
          og_type="website", priority="0.9", freq="weekly")
@@ -581,7 +581,7 @@ def home():
           ("Это бесплатно?", "Карта дня и руна дня бесплатны каждый день. Подробные расклады и полный разбор ладони — платные."),
           ("Какую руку фотографировать?", "Ведущую: правую, если ты правша, и левую, если левша. Ладонь раскрыта, пальцы слегка разведены, свет ровный, без резких теней."),
           ("Что происходит с моим фото?", "Фото используется только для разбора ладони. Подробно — в политике обработки персональных данных на сайте."),
-          ("Это настоящее предсказание?", "Нет. LineLife — развлекательный сервис. Расклады и разборы — повод взглянуть на ситуацию по-новому, а не прогноз будущего.")]
+          ("Это настоящее предсказание?", "Нет. MyLineLife — развлекательный сервис. Расклады и разборы — повод взглянуть на ситуацию по-новому, а не прогноз будущего.")]
     tarot_chips = ''.join(f'<a class="chip" href="/taro/{c["slug"]}/">{c["name"]}</a>' for c in TAROT[:12])
     rune_chips = ''.join(f'<a class="chip" href="/runy/{r["slug"]}/"><b>{r["sym"]}</b> {r["name"]}</a>' for r in RUNES[:12])
     body = f"""<section class="hero">
@@ -603,7 +603,7 @@ def home():
 
 <section id="features">
   <div class="sec-head">
-    <div class="eyebrow">Что умеет LineLife</div>
+    <div class="eyebrow">Что умеет MyLineLife</div>
     <h2>Подсказка на каждый день</h2>
     <p>Четыре способа взглянуть на ситуацию по-новому. Начни с бесплатного — карты и руны дня.</p>
   </div>
@@ -642,13 +642,13 @@ def home():
 </section>
 
 {faq_html(qa)}
-{cta("Что скажет твоя ладонь?", "Открой бота — первая карта дня уже ждёт тебя.", "site_footer_cta", "🖐 Открыть LineLife в Telegram")}
+{cta("Что скажет твоя ладонь?", "Открой бота — первая карта дня уже ждёт тебя.", "site_footer_cta", "🖐 Открыть MyLineLife в Telegram")}
 {daily_script()}"""
-    graph = [{"@type": "WebSite", "name": "LineLife", "alternateName": ["mylinelife", "MyLineLife", "mylinelife.ru", "Лайнлайф"], "url": SITE + "/", "inLanguage": "ru"},
-             {"@type": "Organization", "name": "LineLife", "alternateName": ["mylinelife", "MyLineLife", "mylinelife.ru"], "url": SITE + "/", "logo": SITE + "/assets/icon-512.png",
+    graph = [{"@type": "WebSite", "name": "MyLineLife", "alternateName": ["LineLife", "mylinelife", "mylinelife.ru", "Лайнлайф"], "url": SITE + "/", "inLanguage": "ru"},
+             {"@type": "Organization", "name": "MyLineLife", "alternateName": ["LineLife", "mylinelife", "mylinelife.ru"], "url": SITE + "/", "logo": SITE + "/assets/icon-512.png",
               "sameAs": [BOT, CHANNEL, VK, PINTEREST, "https://dzen.ru/id/6ad4d6414cf8164d988038d2"]},
              faq_ld(qa)]
-    page("/", "Гадание по ладони по фото онлайн, Таро и руны — LineLife",
+    page("/", "Гадание по ладони по фото онлайн, Таро и руны — MyLineLife",
          "Гадание по ладони по фото, на Таро и рунах онлайн бесплатно в Telegram: сфотографируй руку и узнай, что говорят линии. Карта дня и руна дня. 18+",
          body, graph, og_type="website", priority="1.0", freq="daily")
 
@@ -662,7 +662,7 @@ def notfound():
     <a class="btn btn-gold" href="/">На главную</a><a class="btn btn-ghost" href="/taro/">Карты Таро</a><a class="btn btn-ghost" href="/runy/">Руны</a>
   </div>
 </section>"""
-    page("/404.html", "Страница не найдена — LineLife", "Страница не найдена.", body, robots="noindex, follow", sitemap=False)
+    page("/404.html", "Страница не найдена — MyLineLife", "Страница не найдена.", body, robots="noindex, follow", sitemap=False)
 
 
 
@@ -675,7 +675,7 @@ def privacy():
 <p class="muted">Редакция от 25 октября 2026 года</p>
 
 <h2>1. Общие положения</h2>
-<p>Настоящая Политика определяет порядок обработки и защиты персональных данных пользователей Telegram-бота LineLife (@mylinelife_bot, далее — «Бот») и сайта {SITE} (далее — «Сайт») в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных».</p>
+<p>Настоящая Политика определяет порядок обработки и защиты персональных данных пользователей Telegram-бота MyLineLife (@mylinelife_bot, далее — «Бот») и сайта {SITE} (далее — «Сайт») в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных».</p>
 <div class="card">
 <p><strong>Оператор:</strong> Овчаренко Анастасия Дмитриевна, плательщик налога на профессиональный доход (самозанятый), ИНН 910236846388.<br>
 <strong>Контакт для обращений:</strong> <a href="mailto:anikeevmaksim@yandex.ru">anikeevmaksim@yandex.ru</a></p>
@@ -729,8 +729,8 @@ def privacy():
 <h2>11. Изменения Политики</h2>
 <p>Оператор может изменять Политику. Актуальная редакция всегда доступна по адресу {SITE}/privacy.html.</p>
 </article>"""
-    page(url, "Политика обработки персональных данных — LineLife",
-         "Политика обработки персональных данных пользователей Telegram-бота LineLife (@mylinelife_bot) и сайта mylinelife.ru.",
+    page(url, "Политика обработки персональных данных — MyLineLife",
+         "Политика обработки персональных данных пользователей Telegram-бота MyLineLife (@mylinelife_bot) и сайта mylinelife.ru.",
          body, [crumbs_ld(cr)], og_type="website", priority="0.3", freq="yearly")
 
 
@@ -749,7 +749,7 @@ def yesno_page():
     cr = [("Главная", "/"), ("Значения карт Таро", "/taro/"), ("Таро да или нет", url)]
     qa = [("Как работает гадание Таро на «да или нет»?", "Сформулируй вопрос, на который можно ответить «да» или «нет», вытяни одну карту и посмотри её значение в такой трактовке. Одни карты читаются как «да», другие как «нет», а некоторые показывают, что ответ зависит от обстоятельств."),
           ("Как правильно задать вопрос картам?", "Вопрос должен быть конкретным и закрытым: «Получится ли у меня сменить работу в этом году?» вместо «Что меня ждёт?». Чем яснее вопрос, тем понятнее ответ."),
-          ("Что делать, если выпала карта «пока неясно»?", "Такая карта говорит, что ситуация ещё не определилась. Уточни вопрос, дождись новых обстоятельств или сделай полный расклад — например, на три карты в боте LineLife."),
+          ("Что делать, если выпала карта «пока неясно»?", "Такая карта говорит, что ситуация ещё не определилась. Уточни вопрос, дождись новых обстоятельств или сделай полный расклад — например, на три карты в боте MyLineLife."),
           ("Можно ли гадать на «да или нет» каждый день?", "Лучше не задавать один и тот же вопрос по несколько раз: каждый новый ответ только запутывает. Таро — повод задуматься, а не готовое решение.")]
     body = f"""{breadcrumbs(cr)}
 <section class="hub-head">
@@ -765,7 +765,7 @@ def yesno_page():
 <section><h2>Карты, которые говорят «да»</h2><p class="muted">{len(G['yes'])} карт</p><div class="chips">{chips(G['yes'])}</div></section>
 <section><h2>Карты, которые говорят «нет»</h2><p class="muted">{len(G['no'])} карт</p><div class="chips">{chips(G['no'])}</div></section>
 <section><h2>Карты, где ответ неоднозначен</h2><p class="muted">{len(G['maybe'])} карт: ответ зависит от обстоятельств</p><div class="chips">{chips(G['maybe'])}</div></section>
-{cta("Нужен точный ответ?", "Одна карта отвечает коротко. В боте LineLife можно сделать полный расклад Таро на свой вопрос, а карта дня бесплатна каждое утро.", "seo_taro_yesno", "🎴 Сделать расклад")}
+{cta("Нужен точный ответ?", "Одна карта отвечает коротко. В боте MyLineLife можно сделать полный расклад Таро на свой вопрос, а карта дня бесплатна каждое утро.", "seo_taro_yesno", "🎴 Сделать расклад")}
 {faq_html(qa)}
 <p class="muted">Таро — развлекательный сервис, а не предсказание. Не принимай по картам важные решения о здоровье, деньгах и безопасности.</p>
 <script>
@@ -775,7 +775,7 @@ b.addEventListener('click',function(){{var c=C[Math.floor(Math.random()*C.length
 o.innerHTML='<div class="daily-in"><div class="eyebrow">Твоя карта</div><h3><a href="/taro/'+c.s+'/">'+c.n+'</a></h3><p class="big">'+L[c.g]+'</p><p class="muted">Трактовка: '+c.y.toLowerCase()+'</p></div>';}});
 }})();
 </script>"""
-    title = "Таро да или нет онлайн: ответ по всем 78 картам — LineLife"
+    title = "Таро да или нет онлайн: ответ по всем 78 картам — MyLineLife"
     desc = "Гадание Таро на «да или нет» онлайн бесплатно: вытяни карту и узнай ответ. Трактовка всех 78 карт — какие говорят «да», какие «нет», какие просят подождать."
     page(url, title, desc, body, [article_ld("Таро да или нет: ответ по всем 78 картам", desc, url), crumbs_ld(cr), faq_ld(qa)],
          og_type="article", priority="0.9", freq="monthly")
@@ -804,7 +804,7 @@ def day_pages():
   <p>Хочешь узнать больше? Загляни в значение карты в любви, работе и в ответ «да или нет». Все 78 карт описаны в <a href="/taro/">справочнике значений карт Таро</a>, а быстрый ответ на вопрос даёт страница <a href="/taro/da-ili-net/">Таро да или нет</a>.</p>
 </section>
 <section><h2>Значения карт дня: старшие арканы</h2><div class="chips">{chips}<a class="chip more" href="/taro/">Все 78 карт →</a></div></section>
-{cta("Карта дня каждое утро", "Подпишись на канал или открой бота: карта дня и руна дня бесплатно каждое утро, а полный расклад на свой вопрос можно сделать в боте LineLife.", "seo_taro_karta_dnya", "🎴 Получить карту дня")}
+{cta("Карта дня каждое утро", "Подпишись на канал или открой бота: карта дня и руна дня бесплатно каждое утро, а полный расклад на свой вопрос можно сделать в боте MyLineLife.", "seo_taro_karta_dnya", "🎴 Получить карту дня")}
 {faq_html(qa)}
 <p class="muted">Таро — развлекательный сервис, а не предсказание. Карта дня не заменяет советов специалистов.</p>
 <script>
@@ -815,7 +815,7 @@ el.innerHTML='<button class="btn" type="button" id="kd-btn">🔮 Вытянут�
 }})();
 </script>"""
     desc = "Карта дня Таро на сегодня онлайн бесплатно: вытяни карту, прочитай значение, совет дня, толкование в любви и работе. Новая карта каждое утро."
-    page(url, "Карта дня Таро на сегодня онлайн бесплатно — LineLife", desc, body,
+    page(url, "Карта дня Таро на сегодня онлайн бесплатно — MyLineLife", desc, body,
          [article_ld("Карта дня Таро на сегодня онлайн бесплатно", desc, url), crumbs_ld(cr), faq_ld(qa)],
          og_type="article", priority="0.9", freq="daily")
 
@@ -841,7 +841,7 @@ el.innerHTML='<button class="btn" type="button" id="kd-btn">🔮 Вытянут�
   <p>Значение всех 24 рун, в том числе перевёрнутых, описано в <a href="/runy/">справочнике рун Старшего Футарка</a>. Если интересуют карты, загляни на страницу <a href="/taro/karta-dnya/">карта дня Таро</a>.</p>
 </section>
 <section><h2>Значения рун</h2><div class="chips">{chips}</div></section>
-{cta("Руна дня каждое утро", "Подпишись на канал или открой бота: руна дня и карта дня бесплатно каждое утро, а гадание на рунах на свой вопрос можно сделать в боте LineLife.", "seo_runa_dnya", "ᚠ Получить руну дня")}
+{cta("Руна дня каждое утро", "Подпишись на канал или открой бота: руна дня и карта дня бесплатно каждое утро, а гадание на рунах на свой вопрос можно сделать в боте MyLineLife.", "seo_runa_dnya", "ᚠ Получить руну дня")}
 {faq_html(qa)}
 <p class="muted">Руны — развлекательный сервис, а не предсказание.</p>
 <script>
@@ -852,7 +852,7 @@ el.innerHTML='<button class="btn" type="button" id="rd-btn">ᚠ Вытянуть
 }})();
 </script>"""
     desc = "Руна дня на сегодня онлайн бесплатно: вытяни руну Старшего Футарка, прочитай значение, совет дня, толкование в любви и работе. Новая руна каждое утро."
-    page(url, "Руна дня на сегодня: гадание на рунах онлайн — LineLife", desc, body,
+    page(url, "Руна дня на сегодня: гадание на рунах онлайн — MyLineLife", desc, body,
          [article_ld("Руна дня на сегодня: гадание на рунах онлайн бесплатно", desc, url), crumbs_ld(cr), faq_ld(qa)],
          og_type="article", priority="0.9", freq="daily")
 
@@ -864,8 +864,8 @@ def about():
 <article class="prose">
 <section class="hub-head">
   <div class="eyebrow">О проекте</div>
-  <h1>LineLife — гадание по ладони, Таро и руны в Telegram</h1>
-  <p class="lead">LineLife — развлекательный проект о хиромантии, Таро и рунах. Он состоит из Telegram-бота @mylinelife_bot, канала с ежедневной картой @linelife_daily и этого сайта-справочника.</p>
+  <h1>MyLineLife — гадание по ладони, Таро и руны в Telegram</h1>
+  <p class="lead">MyLineLife — развлекательный проект о хиромантии, Таро и рунах. Он состоит из Telegram-бота @mylinelife_bot, канала с ежедневной картой @linelife_daily и этого сайта-справочника.</p>
 </section>
 <div class="grid g3">
   <div class="card"><h3>Бот</h3><p>Разбор ладони по фото, расклады Таро на свой вопрос и руны. Карта дня и руна дня — бесплатно.</p><p><a href="{bot('site_about')}">Открыть бота →</a></p></div>
@@ -874,7 +874,7 @@ def about():
 </div>
 <section class="card" id="metodika">
   <h2>На чём основаны толкования</h2>
-  <p>Значения карт Таро приведены по традиции колоды Райдера — Уэйта, руны — по Старшему Футарку, линии ладони — по классической европейской хиромантии. Все тексты на сайте написаны специально для LineLife.</p>
+  <p>Значения карт Таро приведены по традиции колоды Райдера — Уэйта, руны — по Старшему Футарку, линии ладони — по классической европейской хиромантии. Все тексты на сайте написаны специально для MyLineLife.</p>
   <p>Мы не пугаем и не обещаем: каждое толкование — это повод посмотреть на ситуацию с новой стороны, а не прогноз будущего.</p>
   <h3>Как мы готовим материалы</h3>
   <ul>
@@ -887,16 +887,16 @@ def about():
 </section>
 <section class="card">
   <h2>Важно знать</h2>
-  <p>LineLife — развлекательный сервис для людей старше 18 лет. Материалы сайта и бота не являются предсказанием, медицинской, психологической, юридической или финансовой консультацией. В сложных жизненных ситуациях обращайся к профильным специалистам.</p>
+  <p>MyLineLife — развлекательный сервис для людей старше 18 лет. Материалы сайта и бота не являются предсказанием, медицинской, психологической, юридической или финансовой консультацией. В сложных жизненных ситуациях обращайся к профильным специалистам.</p>
 </section>
 <section class="card">
   <h2>Контакты</h2>
   <p>Вопросы и предложения: <a href="mailto:anikeevmaksim@yandex.ru">anikeevmaksim@yandex.ru</a>. Обработка данных описана в <a href="/privacy.html">политике конфиденциальности</a>.</p>
 </section>
 </article>"""
-    page(url, "О проекте LineLife: гадание по ладони, Таро и руны в Telegram",
-         "LineLife — развлекательный проект о хиромантии, Таро и рунах: Telegram-бот, канал с картой дня и справочник значений. Контакты и принципы.",
-         body, [crumbs_ld(cr), {"@type": "AboutPage", "name": "О проекте LineLife", "url": SITE + url, "inLanguage": "ru"}],
+    page(url, "О проекте MyLineLife: гадание по ладони, Таро и руны в Telegram",
+         "MyLineLife — развлекательный проект о хиромантии, Таро и рунах: Telegram-бот, канал с картой дня и справочник значений. Контакты и принципы.",
+         body, [crumbs_ld(cr), {"@type": "AboutPage", "name": "О проекте MyLineLife", "url": SITE + url, "inLanguage": "ru"}],
          og_type="website", priority="0.5", freq="yearly")
 
 

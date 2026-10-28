@@ -46,7 +46,7 @@ def card(kind, big, bigcls, eyebrow, title, kws, accent=None, slug=None):
     return f"""<html><head><meta charset=utf-8><style>{css}</style></head><body><div class=stars></div><div class=frame></div>
 <div class=glyph>{PALMHTML if bigcls=="pal" else f'<div class={bigcls}>{E(big)}</div>'}</div>
 <div class=txt><div class=eb>{E(eyebrow)}</div><h1>{E(title)}</h1><div class=kw>{E(kws)}</div></div>
-<div class=ft><b>LineLife</b><span>гадание в Telegram · @mylinelife_bot</span></div></body></html>"""
+<div class=ft><b>MyLineLife</b><span>гадание в Telegram · @mylinelife_bot</span></div></body></html>"""
 
 jobs = []
 for c in TAROT:
