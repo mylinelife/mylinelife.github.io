@@ -15,6 +15,7 @@ for _n in ('data_tarot_more1', 'data_tarot_more2', 'data_tarot_more3', 'data_tar
         pass
 from data_runes import RUNES
 from data_palm import PALM
+from data_palm_signs import SIGNS
 from data_runes_extra1 import EXTRA1
 from data_runes_extra2 import EXTRA2
 from data_runes_extra3 import PRACTICE
@@ -512,6 +513,33 @@ def palm_extra(p):
             f'<section class="prose card"><h2>Типичные ошибки при чтении: {p["name"].lower()}</h2><p>{x["mistakes"]}</p></section>')
 
 
+def sign_pages():
+    for g in SIGNS:
+        url = f"/hiromantiya/{g['slug']}/"
+        cr = [("Главная", "/"), ("Хиромантия", "/hiromantiya/"), (g["h1"].split(":")[0], url)]
+        secs = ''.join(f'<section class="prose card"><h2>{h}</h2><p>{t}</p></section>' for h, t in g["secs"])
+        others = ''.join(f'<a class="chip" href="/hiromantiya/{o["slug"]}/">{o["name"]}</a>' for o in PALM_MAIN)
+        more = ''.join(f'<a class="chip" href="/hiromantiya/{o["slug"]}/">{o["h1"].split(":")[0]}</a>' for o in SIGNS if o is not g)
+        body = f"""{breadcrumbs(cr)}
+<article class="entry">
+  <header class="entry-head">
+    <div class="sigil palm-sigil">{palm_svg(g['base'])}</div>
+    <div>
+      <div class="eyebrow">Хиромантия</div>
+      <h1>{g['h1']}</h1>
+      <p class="lead">{g['lead']}</p>
+    </div>
+  </header>
+  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
+  {secs}
+  <p class="muted">Хиромантия — традиция толкования линий руки, а не научный метод. Толкования приведены в развлекательных целях.</p>
+</article>
+{cta("Что говорят знаки на твоей ладони?", "Пришли фото ладони в бот MyLineLife и получи разбор линий и знаков прямо в Telegram.", f"seo_palm_{g['slug']}", "🖐 Прочитать мою ладонь")}
+{faq_html(g['faq'])}
+<section><h2>Другие линии и знаки</h2><div class="chips">{others}{more}</div></section>"""
+        page(url, g["title"], g["desc"], body, [article_ld(g["h1"], g["desc"], url), crumbs_ld(cr), faq_ld(g["faq"])], priority="0.8")
+
+
 def palm_pages():
     for p in PALM:
         url = f"/hiromantiya/{p['slug']}/"
@@ -540,7 +568,8 @@ def palm_pages():
 </article>
 {cta(f"Что говорит твоя {p['name'].lower()}?", "Пришли фото ладони в бот MyLineLife — и получи разбор линий прямо в Telegram.", f"seo_palm_{p['slug']}", "🖐 Прочитать мою ладонь")}
 {faq_html(p['faq'])}
-<section><h2>Другие линии на ладони</h2><div class="chips">{others}</div></section>"""
+<section><h2>Другие линии на ладони</h2><div class="chips">{others}</div></section>
+<section><h2>Знаки и особенности линий</h2><div class="chips">{''.join(f'<a class="chip" href="/hiromantiya/{o["slug"]}/">{o["h1"].split(":")[0]}</a>' for o in SIGNS)}</div></section>"""
         page(url, title, desc, body, [article_ld(h1, desc, url), crumbs_ld(cr), faq_ld(p["faq"])], priority="0.8")
 
     url = "/hiromantiya/"
@@ -561,6 +590,7 @@ def palm_pages():
 </section>
 <section><div class="grid tiles g2">{tiles}</div></section>
 <section><h2>Второстепенные линии</h2><div class="grid tiles g2">{minor_tiles}</div></section>
+<section><h2>Знаки и особенности линий</h2><div class="chips">{''.join(f'<a class="chip" href="/hiromantiya/{o["slug"]}/">{o["h1"].split(":")[0]}</a>' for o in SIGNS)}</div></section>
 <section class="prose card">
   <h2>Как сфотографировать ладонь для гадания</h2>
   <ol>
@@ -920,5 +950,5 @@ def sitemap():
 
 
 if __name__ == "__main__":
-    home(); tarot_pages(); yesno_page(); rune_pages(); day_pages(); palm_pages(); notfound(); privacy(); about(); sitemap()
+    home(); tarot_pages(); yesno_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); sitemap()
     print(len(pages), "pages")
