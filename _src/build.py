@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from data_tarot import TAROT
 MORE = {}
 from data_tarot_more6 import WORK
+from data_tarot_more7 import MEN
 for _n in ('data_tarot_more1', 'data_tarot_more2', 'data_tarot_more3', 'data_tarot_more4', 'data_tarot_more5'):
     try:
         _mod = __import__(_n)
@@ -249,6 +250,7 @@ def more_html(c, mo):
     return (f'<section class="prose card"><h2>{c["name"]} как человек или ситуация</h2><p>{mo["person"]}</p></section>'
             f'<section class="prose card"><h2>{c["name"]} как карта дня</h2><p>{mo["day"]}</p></section>'
             f'<section class="prose card"><h2>Сочетания карты {c["name"]}</h2><p>{mo["combo"]}</p></section>'
+            + (f'<section class="prose card"><h2>{c["name"]}: что чувствует мужчина</h2><p>{MEN[c["slug"]]}</p></section>' if c["slug"] in MEN else '')
             + (f'<section class="prose card"><h2>{c["name"]} в работе и финансах</h2><p>{WORK[c["slug"]]}</p></section>' if c["slug"] in WORK else ''))
 
 
