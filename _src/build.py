@@ -20,7 +20,7 @@ from data_runes_extra1 import EXTRA1
 from data_runes_extra2 import EXTRA2
 from data_runes_extra3 import PRACTICE
 RUNE_X = {**EXTRA1, **EXTRA2}
-from data_hubs_extra import SUIT_X, RUNES_HUB_X, PALM_X, PALM_SHOWS
+from data_hubs_extra import SUIT_X, RUNES_HUB_X, PALM_X, PALM_SHOWS, HUB_SOURCES
 from data_minor import MINOR, SUITS
 from data_deepen import RUNE_DEEP, CARD_DEEP, DAY_DEEP, MODIFIED
 import data_arkan
@@ -63,6 +63,12 @@ def summary_table(title, head, rows):
     th = "".join(f"<th scope=\"col\">{h}</th>" for h in head)
     tr = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows)
     return f'<section class="card prose"><h2>{title}</h2><div class="tbl"><table><thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></div></section>'
+
+
+def sources_html(key):
+    """Раздел «Источники» хаба: факты и ссылки на проверенные статьи."""
+    li = "".join(f'<li>{t}' + (f' <a href="{u}" rel="noopener" target="_blank">Википедия</a>' if u else "") + "</li>" for t, u in HUB_SOURCES[key])
+    return f'<section class="prose card"><h2>Источники</h2><ol>{li}</ol></section>'
 
 
 def first_sentence(t):
@@ -410,6 +416,7 @@ def tarot_pages():
   <p>Каждая карта несёт несколько слоёв смысла. Прямое положение показывает основное значение, перевёрнутое — его ослабленную, задержанную или искажённую форму. В раскладе важна и позиция: одна и та же карта по-разному звучит в позиции «прошлое», «препятствие» или «совет».</p>
   <p>Если в раскладе много старших арканов, ситуация воспринимается как значимая. Преобладание одной масти подсказывает сферу: Жезлы — дела и энергия, Кубки — чувства, Мечи — мысли и конфликты, Пентакли — деньги и материальное. Помни, что Таро — это повод взглянуть на ситуацию по-новому, а не готовый ответ.</p>
 </section>
+{sources_html("taro")}
 {cta("Задай свой вопрос картам", "Расклад Таро на любовь, работу или выбор — в боте MyLineLife. Карта дня бесплатно каждое утро.", "seo_taro_hub", "🎴 Сделать расклад")}
 {faq_html(qa)}
 {daily_script()}"""
@@ -550,6 +557,7 @@ def rune_pages():
   <h2>Как читать руны</h2>
   <p>Руна, выпавшая прямо, показывает своё основное значение. Перевёрнутая — ослабленное или противоположное. Девять рун симметричны и переворачиваться не могут. Самый простой расклад — одна руна на день или на вопрос: она подсказывает настроение и совет.</p>
 </section>
+{sources_html("runy")}
 {cta("Руна дня ждёт тебя", "Руна дня бесплатно каждое утро и расклады на рунах — в боте MyLineLife.", "seo_runy_hub", "ᚠ Вытянуть руну")}
 {faq_html(qa)}"""
     page(url, "Руны и их значение: все 24 руны Старшего Футарка | MyLineLife",
@@ -660,6 +668,7 @@ def palm_pages():
   </ol>
 </section>
 {deep_html(DAY_DEEP["hiromantiya"])}
+{sources_html("hiromantiya")}
 {cta("Гадание по ладони по фото", "Пришли фото ладони в бот MyLineLife — и получи разбор основных линий прямо в Telegram.", "seo_palm_hub", "🖐 Прочитать мою ладонь")}
 {faq_html(qa)}"""
     page(url, "Линии на руке и их значение: хиромантия по ладони | MyLineLife",
