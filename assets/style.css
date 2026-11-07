@@ -146,3 +146,4 @@ footer{padding:40px 0 50px;color:var(--muted);font-size:14px;border-top:1px soli
 .combos a{color:var(--gold2);text-decoration:none}.combos a:hover{text-decoration:underline}.combos{list-style:disc}
 
 .shot{margin:26px 0 6px}.shot img{display:block;width:100%;height:auto;border-radius:16px;border:1px solid var(--line)}
+.arkan-form{display:grid;gap:10px;max-width:420px}.arkan-form input{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid #3a2f5c;background:#1a1430;color:inherit;color-scheme:dark}#ark-out{display:grid;gap:12px}

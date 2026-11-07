@@ -23,6 +23,7 @@ RUNE_X = {**EXTRA1, **EXTRA2}
 from data_hubs_extra import SUIT_X, RUNES_HUB_X, PALM_X
 from data_minor import MINOR, SUITS
 from data_deepen import RUNE_DEEP, CARD_DEEP, DAY_DEEP, MODIFIED
+import data_arkan
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SITE = "https://mylinelife.ru"
@@ -326,7 +327,7 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
   <a href="/taro/{nxt['slug']}/">{nxt['name']} →</a>
 </nav>
 {faq_html(qa)}
-<section><h2>{others_title}</h2><div class="chips">{chips}<a class="chip more" href="/taro/">Все 78 карт →</a><a class="chip more" href="/taro/da-ili-net/">Таро да или нет →</a></div></section>"""
+<section><h2>{others_title}</h2><div class="chips">{chips}<a class="chip more" href="/taro/">Все 78 карт →</a><a class="chip more" href="/taro/da-ili-net/">Таро да или нет →</a>{'<a class="chip more" href="/taro/arkan-po-date-rozhdeniya/">Аркан по дате рождения →</a>' if deck is TAROT else ''}</div></section>"""
     page(url, title, desc, body, [article_ld(h1, desc, url), crumbs_ld(cr), faq_ld(qa)], priority="0.8")
 
 
@@ -381,7 +382,7 @@ def tarot_pages():
   <h1>Значение карт Таро: все 78 карт</h1>
   <p class="lead">Толкования всех карт колоды Таро: 22 старших аркана и 56 младших в четырёх мастях. Для каждой карты — прямое и перевёрнутое положение, любовь, работа, совет и ответ «да или нет».</p>
   <div class="daily" id="daily"></div>
-  <p class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро на сегодня →</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет →</a></p>
+  <p class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро на сегодня →</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет →</a><a class="chip" href="/taro/arkan-po-date-rozhdeniya/">🔢 Аркан по дате рождения →</a></p>
 </section>
 <section><h2>Старшие арканы</h2><p class="muted">Большие жизненные темы и этапы</p><div class="grid tiles">{''.join(tile(c, c['num']) for c in TAROT)}</div></section>
 {suits_html}
@@ -643,6 +644,50 @@ def palm_pages():
          "Хиромантия для начинающих: линия жизни, сердца, головы и судьбы — где находятся и что означают. Гадание по ладони по фото в Telegram.",
          body, [crumbs_ld(cr), faq_ld(qa), {"@type": "CollectionPage", "name": "Хиромантия", "url": SITE + url, "inLanguage": "ru"}],
          og_type="website", priority="0.9", freq="weekly")
+
+
+def arkan_page():
+    """Калькулятор аркана по дате рождения: аркан личности (день) и аркан судьбы (сумма цифр)."""
+    url = "/taro/arkan-po-date-rozhdeniya/"
+    MODIFIED.setdefault(url, "2026-11-08")
+    cr = [("Главная", "/"), ("Значения карт Таро", "/taro/"), ("Аркан по дате рождения", url)]
+    by_num = {n: TAROT[n % 22] for n in range(1, 23)}
+    data = {n: {"n": c["name"], "s": c["slug"], "p": data_arkan.PERSON[n]} for n, c in by_num.items()}
+    rows = "".join(f'<li><a href="/taro/{c["slug"]}/"><b>{n}</b> {c["name"]}</a> — {data_arkan.PERSON[n].split(" — ", 1)[1].split(".")[0]}.</li>' for n, c in by_num.items())
+    secs = "".join(f'<section class="prose card"><h2>{h}</h2>' + "".join(f"<p>{x}</p>" for x in t.split("\n\n")) + "</section>" for h, t in data_arkan.SECTIONS)
+    qa = data_arkan.FAQ
+    h1 = "Аркан по дате рождения: рассчитать онлайн бесплатно"
+    desc = "Рассчитать аркан по дате рождения онлайн бесплатно: аркан личности и аркан судьбы, значение всех 22 старших арканов, как посчитать вручную и совместимость по арканам."
+    body = f"""{breadcrumbs(cr)}
+<section class="hub-head">
+  <div class="eyebrow">Таро · калькулятор · бесплатно</div>
+  <h1>{h1}</h1>
+  <p class="lead">Введи дату рождения, и калькулятор посчитает два аркана: аркан личности по дню рождения и аркан судьбы по всей дате. Ниже — что означает каждый из 22 старших арканов и как сделать расчёт самостоятельно.</p>
+  <p class="meta">Обновлено {mod_ru(url)} · Редакция MyLineLife, <a href="/o-proekte/#metodika">как мы работаем</a></p>
+  <form class="daily arkan-form" id="ark" onsubmit="return false">
+    <label for="ark-d">Дата рождения</label>
+    <input type="date" id="ark-d" min="1900-01-01" max="2026-12-31" required>
+    <button class="btn btn-gold" type="submit">Рассчитать аркан</button>
+    <div id="ark-out" aria-live="polite"></div>
+  </form>
+</section>
+{secs}
+<section class="prose card"><h2>Значение 22 старших арканов по дате рождения</h2><ul class="combos">{rows}</ul><p>Подробное толкование каждой карты — в прямом и перевёрнутом положении, в любви и работе — в <a href="/taro/">справочнике значений карт Таро</a>.</p></section>
+{cta("Разбор по картам Таро", "Хочешь подробнее? Задай вопрос в боте MyLineLife и получи расклад Таро прямо в Telegram.", "seo_taro_arkan", "🎴 Сделать расклад")}
+{faq_html(qa)}
+<p class="muted">Расчёт аркана — развлекательная практика на стыке Таро и нумерологии, а не предсказание.</p>
+<script>
+(function(){{var A={json.dumps(data, ensure_ascii=False)};var f=document.getElementById('ark'),o=document.getElementById('ark-out');
+function r(n){{while(n>22)n-=22;return n}}
+function card(t,n){{var c=A[n];return '<div class="daily-in"><div class="eyebrow">'+t+'</div><h3><a href="/taro/'+c.s+'/">'+n+'. '+c.n+'</a></h3><p>'+c.p+'</p></div>'}}
+f.addEventListener('submit',function(){{var v=document.getElementById('ark-d').value;if(!v)return;var p=v.split('-');var d=+p[2];
+var s=v.replace(/\\D/g,'').split('').reduce(function(a,x){{return a+ +x}},0);
+o.innerHTML=card('Аркан личности (по дню рождения)',r(d))+card('Аркан судьбы (сумма цифр даты: '+s+')',r(s));
+if(window.ym)ym(113777002,'reachGoal','arkan_calc');}});
+}})();
+</script>"""
+    page(url, "Аркан по дате рождения: рассчитать онлайн бесплатно — MyLineLife", desc, body,
+         [article_ld(h1, desc, url), crumbs_ld(cr), faq_ld(qa)], og_type="website", priority="0.9", freq="monthly")
 
 
 # ---------------- ГЛАВНАЯ ----------------
@@ -990,5 +1035,5 @@ def sitemap():
 
 
 if __name__ == "__main__":
-    home(); tarot_pages(); yesno_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); sitemap()
+    home(); tarot_pages(); yesno_page(); arkan_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); sitemap()
     print(len(pages), "pages")
