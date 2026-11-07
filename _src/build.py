@@ -22,6 +22,7 @@ from data_runes_extra3 import PRACTICE
 RUNE_X = {**EXTRA1, **EXTRA2}
 from data_hubs_extra import SUIT_X, RUNES_HUB_X, PALM_X
 from data_minor import MINOR, SUITS
+from data_deepen import RUNE_DEEP, CARD_DEEP, DAY_DEEP, MODIFIED
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SITE = "https://mylinelife.ru"
@@ -33,6 +34,27 @@ TODAY = "2026-10-24"
 TODAY_RU = "24 октября 2026"
 CSS_V = "14"
 E = html.escape
+RU_MONTHS = ["", "января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"]
+for _s in WORK:
+    MODIFIED.setdefault(f"/taro/{_s}/", "2026-11-08")
+
+
+def mod_iso(url):
+    """Дата последнего изменения страницы: общая TODAY, если страницу не правили позже."""
+    return MODIFIED.get(url, TODAY)
+
+
+def mod_ru(url):
+    y, m, d = mod_iso(url).split("-")
+    return f"{int(d)} {RU_MONTHS[int(m)]} {y}"
+
+
+def deep_html(d):
+    """Дополнительные разделы страницы из data_deepen: абзацы через пустую строку."""
+    if not d:
+        return ""
+    return "".join(f'<section class="prose card"><h2>{h}</h2>' + "".join(f"<p>{x}</p>" for x in t.split("\n\n")) + "</section>"
+                   for h, t in d["sections"])
 pages = []  # (path, priority, changefreq)
 
 
@@ -88,7 +110,7 @@ def faq_ld(qa):
 
 def article_ld(title, desc, url):
     return {"@type": "Article", "headline": title, "description": desc, "inLanguage": "ru",
-            "datePublished": TODAY, "dateModified": TODAY, "mainEntityOfPage": SITE + url,
+            "datePublished": TODAY, "dateModified": mod_iso(url), "mainEntityOfPage": SITE + url,
             "image": SITE + "/assets/og.png",
             "author": {"@type": "Organization", "name": "MyLineLife", "url": SITE + "/"},
             "publisher": {"@type": "Organization", "name": "MyLineLife",
@@ -252,7 +274,7 @@ def more_html(c, mo):
             f'<section class="prose card"><h2>{c["name"]} как карта дня</h2><p>{mo["day"]}</p></section>'
             f'<section class="prose card"><h2>Сочетания карты {c["name"]}</h2><p>{mo["combo"]}</p></section>'
             + (f'<section class="prose card"><h2>{c["name"]}: что чувствует мужчина</h2><p>{MEN[c["slug"]]}</p></section>' if c["slug"] in MEN else '')
-            + (f'<section class="prose card"><h2>{c["name"]} в работе и финансах</h2><p>{WORK[c["slug"]]}</p></section>' if c["slug"] in WORK else ''))
+            + (f'<section class="prose card"><h2>{c["name"]}: карьера и деньги подробнее</h2><p>{WORK[c["slug"]]}</p></section>' if c["slug"] in WORK else ''))
 
 
 def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hub_label, sigil_top):
@@ -269,6 +291,7 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
     mo = MORE.get(c['slug'])
     if mo:
         qa += list(mo['faq'])
+    qa += CARD_DEEP.get(c['slug'], {}).get('faq', [])
     cr = [("Главная", "/"), ("Значения карт Таро", "/taro/")] + crumbs_mid + [(c["name"], url)]
     chips = ''.join(f'<a class="chip" href="/taro/{t["slug"]}/">{t["name"]}</a>' for t in others if t is not c)
     body = f"""{breadcrumbs(cr)}
@@ -282,7 +305,7 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
       <ul class="kw">{''.join(f'<li>{k}</li>' for k in c['kw'])}</ul>
     </div>
   </header>
-  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
+  <p class="meta">Обновлено {mod_ru(url)} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <div class="entry-grid">
     <section class="card"><h2>Перевёрнутая карта {c['name']}</h2><p>{c['reversed']}</p></section>
     <section class="card"><h2>{c['name']} в любви и отношениях</h2><p>{c['love']}</p></section>
@@ -290,7 +313,7 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
     <section class="card"><h2>Совет карты</h2><p>{c['advice']}</p></section>
     <section class="card yes"><h2>{c['name']}: да или нет</h2><p class="big">{c['yesno']}</p><p>Ответ зависит от вопроса и соседних карт в раскладе.</p></section>
   </div>
-  {more_html(c, mo)}
+  {more_html(c, mo)}{deep_html(CARD_DEEP.get(c['slug']))}
   <p class="muted">Значение карты в конкретном раскладе зависит от вопроса и позиции. Описание приведено по традиции колоды Райдера — Уэйта и носит развлекательный характер.</p>
 </article>
 {cta(f"Выпадет ли тебе {c['name']}?", "Задай свой вопрос в боте MyLineLife и получи расклад Таро прямо в Telegram.", f"seo_taro_{c['slug']}", "🎴 Сделать расклад")}
@@ -401,6 +424,7 @@ def rune_pages():
         x = RUNE_X[r["slug"]]
         qa += [(f"Руна {r['name']}: да или нет?", x["yesno"]),
                (f"Как читать руну {r['name']} в раскладе?", x["spread"])]
+        qa += RUNE_DEEP.get(r['slug'], {}).get('faq', [])
         combos_html = "".join(f'<li><a href="/runy/{cs}/">{RUNE_BY[cs]["sym"]} {RUNE_BY[cs]["name"]}</a> — {ct}</li>' for cs, ct in x["combos"])
         cr = [("Главная", "/"), ("Значения рун", "/runy/"), (r["name"], url)]
         others = ''.join(f'<a class="chip" href="/runy/{t["slug"]}/"><b>{t["sym"]}</b> {t["name"]}</a>' for t in RUNES if t is not r)
@@ -415,7 +439,7 @@ def rune_pages():
       <ul class="kw"><li>«{r['meaning']}»</li>{''.join(f'<li>{k}</li>' for k in r['kw'])}</ul>
     </div>
   </header>
-  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
+  <p class="meta">Обновлено {mod_ru(url)} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <div class="entry-grid">
     <section class="card"><h2>{'Перевёрнутая руна ' + r['name'] if r['rev'] else 'Перевёрнутое положение'}</h2><p>{revtxt}</p></section>
     <section class="card"><h2>Руна {r['name']} в любви</h2><p>{r['love']}</p></section>
@@ -426,7 +450,7 @@ def rune_pages():
   <section class="prose card"><h2>Руна {r['name']} в раскладе</h2><p>{x['spread']}</p></section>
   <section class="prose card"><h2>Сочетания руны {r['name']} с другими рунами</h2><ul class="combos">{combos_html}</ul></section>
   <section class="prose card"><h2>Руна {r['name']}: да или нет</h2><p>{x['yesno']}</p></section>
-  <section class="prose card"><h2>Руна {r['name']} как руна дня: практика</h2><p>{PRACTICE[r['slug']]}</p></section>
+  <section class="prose card"><h2>Руна {r['name']} как руна дня: практика</h2><p>{PRACTICE[r['slug']]}</p></section>{deep_html(RUNE_DEEP.get(r['slug']))}
   <p class="muted">Толкование дано по традиции Старшего Футарка и носит развлекательный характер.</p>
 </article>
 {cta(f"Какая руна выпадет тебе сегодня?", "Руна дня бесплатно каждое утро и расклады на рунах — в боте MyLineLife.", f"seo_runa_{r['slug']}", "ᚠ Вытянуть руну")}
@@ -459,7 +483,7 @@ def rune_pages():
       <ul class="kw"><li>неизвестность</li><li>судьба</li><li>доверие</li><li>чистый лист</li></ul>
     </div>
   </header>
-  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
+  <p class="meta">Обновлено {mod_ru(url)} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <div class="entry-grid">
     <section class="card"><h2>Откуда она взялась</h2><p>В исторических рунических рядах пустой руны нет: её добавили в XX веке. Поэтому одни гадающие убирают её из набора, а другие считают важным знаком.</p></section>
     <section class="card"><h2>Как её читают</h2><p>Если пустая руна выпала в раскладе, её трактуют как знак, что ответ пока скрыт, а исход зависит от решений, которые ещё не приняты.</p></section>
@@ -537,7 +561,7 @@ def sign_pages():
       <p class="lead">{g['lead']}</p>
     </div>
   </header>
-  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
+  <p class="meta">Обновлено {mod_ru(url)} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   {secs}
   <p class="muted">Хиромантия — традиция толкования линий руки, а не научный метод. Толкования приведены в развлекательных целях.</p>
 </article>
@@ -566,7 +590,7 @@ def palm_pages():
       <p class="lead">{p['where']}</p>
     </div>
   </header>
-  <p class="meta">Обновлено {TODAY_RU} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
+  <p class="meta">Обновлено {mod_ru(url)} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <section class="prose card"><h2>Что означает {p['name'].lower()}</h2><p>{p['general']}</p></section>
   <h2>Как читать {p['name'].lower().replace('линия','линию',1)}</h2>
   <div class="entry-grid">{variants}</div>
@@ -586,6 +610,7 @@ def palm_pages():
     qa = [("Какую руку смотрят в хиромантии?", "Обычно смотрят ведущую руку: правую у правшей и левую у левшей. Вторую руку иногда читают как врождённые склонности."),
           ("Можно ли погадать по ладони по фото?", "Да. Пришли фото ладони в бот @mylinelife_bot: раскрытая ведущая рука, ровный свет, линии хорошо видны."),
           ("Меняются ли линии на руке?", "Да, со временем рисунок линий может меняться, поэтому ладонь стоит иногда разглядывать заново.")]
+    qa += DAY_DEEP["hiromantiya"]["faq"]
     body = f"""{breadcrumbs(cr)}
 <section class="hub-head with-art">
   <div>
@@ -608,6 +633,7 @@ def palm_pages():
     <li>Проверь, что линии чётко видны, и отправь фото в бот.</li>
   </ol>
 </section>
+{deep_html(DAY_DEEP["hiromantiya"])}
 {cta("Гадание по ладони по фото", "Пришли фото ладони в бот MyLineLife — и получи разбор основных линий прямо в Telegram.", "seo_palm_hub", "🖐 Прочитать мою ладонь")}
 {faq_html(qa)}"""
     page(url, "Линии на руке и их значение: хиромантия по ладони | MyLineLife",
@@ -831,6 +857,7 @@ def day_pages():
           ("Как пользоваться картой дня?", "Утром спокойно подумай о предстоящем дне, нажми «Вытянуть карту» и прочитай значение. Вечером вспомни, как карта отозвалась в событиях дня. Новую карту в тот же день лучше не вытягивать: так подсказка остаётся честной."),
           ("Карта дня на сегодня бесплатно: где её получить?", "На этой странице карта дня доступна бесплатно и без регистрации. Каждое утро новую карту также присылает Telegram-канал @mylinelife_daily и бот @mylinelife_bot."),
           ("Что значит перевёрнутая карта дня?", "Перевёрнутое положение смягчает или задерживает значение карты. Подробные трактовки каждой карты, в том числе перевёрнутой, есть в справочнике значений карт Таро.")]
+    qa += DAY_DEEP["karta-dnya"]["faq"]
     chips = ''.join(f'<a class="chip" href="/taro/{c["slug"]}/">{c["name"]}</a>' for c in TAROT)
     body = f"""{breadcrumbs(cr)}
 <section class="hub-head">
@@ -844,6 +871,7 @@ def day_pages():
   <p>Прочитай ключевые слова карты и совет. Не ищи в карте точных событий: она показывает настроение дня и то, на что полезно обратить внимание. Если выпала сложная карта вроде Башни или Смерти, это не плохой знак: чаще она говорит о переменах и завершении старого.</p>
   <p>Хочешь узнать больше? Загляни в значение карты в любви, работе и в ответ «да или нет». Все 78 карт описаны в <a href="/taro/">справочнике значений карт Таро</a>, а быстрый ответ на вопрос даёт страница <a href="/taro/da-ili-net/">Таро да или нет</a>.</p>
 </section>
+{deep_html(DAY_DEEP["karta-dnya"])}
 <section><h2>Значения карт дня: старшие арканы</h2><div class="chips">{chips}<a class="chip more" href="/taro/">Все 78 карт →</a></div></section>
 {cta("Карта дня каждое утро", "Подпишись на канал или открой бота: карта дня и руна дня бесплатно каждое утро, а полный расклад на свой вопрос можно сделать в боте MyLineLife.", "seo_taro_karta_dnya", "🎴 Получить карту дня")}
 {faq_html(qa)}
@@ -868,6 +896,7 @@ el.innerHTML='<button class="btn" type="button" id="kd-btn">🔮 Вытянут�
           ("Как гадать на руне дня?", "Спокойно настройся на день, нажми «Вытянуть руну» и прочитай значение. Вечером вспомни, как руна проявилась в событиях дня. Вытягивать новую руну в тот же день не нужно."),
           ("Руна дня на сегодня бесплатно: где получить?", "На этой странице руна дня доступна бесплатно и без регистрации, а каждое утро новую руну присылает Telegram-канал @mylinelife_daily и бот @mylinelife_bot."),
           ("Сколько рун в Старшем Футарке?", "В Старшем Футарке 24 руны, разделённые на три атта по 8 рун. Значение каждой описано в справочнике рун.")]
+    qa += DAY_DEEP["runa-dnya"]["faq"]
     chips = ''.join(f'<a class="chip" href="/runy/{r["slug"]}/">{r["sym"]} {r["name"]}</a>' for r in RUNES)
     body = f"""{breadcrumbs(cr)}
 <section class="hub-head">
@@ -881,6 +910,7 @@ el.innerHTML='<button class="btn" type="button" id="kd-btn">🔮 Вытянут�
   <p>Прочитай ключевые слова руны и совет. Руны не обещают конкретных событий: они подсказывают, на чём лучше сосредоточиться. Если руна перевёрнутая или тяжёлая, как Хагалаз или Наутиз, это не приговор, а повод быть внимательнее и не торопиться.</p>
   <p>Значение всех 24 рун, в том числе перевёрнутых, описано в <a href="/runy/">справочнике рун Старшего Футарка</a>. Если интересуют карты, загляни на страницу <a href="/taro/karta-dnya/">карта дня Таро</a>.</p>
 </section>
+{deep_html(DAY_DEEP["runa-dnya"])}
 <section><h2>Значения рун</h2><div class="chips">{chips}</div></section>
 {cta("Руна дня каждое утро", "Подпишись на канал или открой бота: руна дня и карта дня бесплатно каждое утро, а гадание на рунах на свой вопрос можно сделать в боте MyLineLife.", "seo_runa_dnya", "ᚠ Получить руну дня")}
 {faq_html(qa)}
@@ -949,7 +979,7 @@ def about():
 def sitemap():
     xs = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u, pr, fr in pages:
-        xs.append(f"  <url><loc>{SITE}{u}</loc><lastmod>{TODAY}</lastmod><changefreq>{fr}</changefreq><priority>{pr}</priority></url>")
+        xs.append(f"  <url><loc>{SITE}{u}</loc><lastmod>{mod_iso(u)}</lastmod><changefreq>{fr}</changefreq><priority>{pr}</priority></url>")
     xs.append("</urlset>")
     write("/sitemap.xml", "\n".join(xs) + "\n")
     write("/CNAME", SITE.replace("https://", "") + "\n")
