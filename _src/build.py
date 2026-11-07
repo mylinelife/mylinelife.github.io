@@ -24,6 +24,7 @@ from data_hubs_extra import SUIT_X, RUNES_HUB_X, PALM_X
 from data_minor import MINOR, SUITS
 from data_deepen import RUNE_DEEP, CARD_DEEP, DAY_DEEP, MODIFIED
 import data_arkan
+from bot_links import bot_url
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SITE = "https://mylinelife.ru"
@@ -99,7 +100,7 @@ def write(path, content):
 
 
 def bot(src):
-    return f"{BOT}?start=src_{src}"
+    return bot_url(src)
 
 
 def ld(obj):
@@ -410,9 +411,9 @@ def daily_script():
     return """<script>
 (function(){var C=%s;var el=document.getElementById('daily');if(!el)return;
 var d=new Date();var seed=d.getFullYear()*1000+(d.getMonth()+1)*40+d.getDate();var c=C[(seed*7919)%%C.length];
-el.innerHTML='<div class="daily-in"><div class="eyebrow">Карта дня · '+d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})+'</div><h3><a href="/taro/'+c.s+'/">'+c.n+'</a></h3><p>'+c.a+'</p><p class="note">'+c.k.join(' · ')+' — <a href="/taro/'+c.s+'/">читать значение</a></p><p><a class="btn btn-gold btn-sm" href="https://t.me/mylinelife_bot?start=src_daily_result">🔮 Задать свой вопрос картам</a></p></div>';
+el.innerHTML='<div class="daily-in"><div class="eyebrow">Карта дня · '+d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})+'</div><h3><a href="/taro/'+c.s+'/">'+c.n+'</a></h3><p>'+c.a+'</p><p class="note">'+c.k.join(' · ')+' — <a href="/taro/'+c.s+'/">читать значение</a></p><p><a class="btn btn-gold btn-sm" href="BOT_DAILY_URL">🔮 Задать свой вопрос картам</a></p></div>';
 })();
-</script>""" % json.dumps(data, ensure_ascii=False)
+</script>""".replace("BOT_DAILY_URL", bot("daily_result")) % json.dumps(data, ensure_ascii=False)
 
 
 # ---------------- РУНЫ ----------------
@@ -661,7 +662,7 @@ def arkan_page():
     by_num = {n: TAROT[n % 22] for n in range(1, 23)}
     data = {n: {"n": c["name"], "s": c["slug"], "p": data_arkan.PERSON[n]} for n, c in by_num.items()}
     rows = "".join(f'<li><a href="/taro/{c["slug"]}/"><b>{n}</b> {c["name"]}</a> — {data_arkan.PERSON[n].split(" — ", 1)[1].split(".")[0]}.</li>' for n, c in by_num.items())
-    secs = "".join(f'<section class="prose card"><h2>{h}</h2>' + "".join(f"<p>{x}</p>" for x in t.split("\n\n")) + "</section>" for h, t in data_arkan.SECTIONS)
+    secs = "".join(f'<section class="prose card"><h2>{h}</h2>' + "".join(f"<p>{x}</p>" for x in t.split("\n\n")) + (f'<p><a class="btn btn-gold btn-sm" href="{bot("seo_taro_arkan_compat")}">👩‍❤️‍👨 Проверить совместимость в боте</a></p>' if h.startswith("Совместимость") else "") + "</section>" for h, t in data_arkan.SECTIONS)
     qa = data_arkan.FAQ
     h1 = "Аркан по дате рождения: рассчитать онлайн бесплатно"
     desc = "Рассчитать аркан по дате рождения онлайн бесплатно: аркан личности и аркан судьбы, значение всех 22 старших арканов, как посчитать вручную и совместимость по арканам."
@@ -680,14 +681,14 @@ def arkan_page():
 </section>
 {secs}
 <section class="prose card"><h2>Значение 22 старших арканов по дате рождения</h2><ul class="combos">{rows}</ul><p>Подробное толкование каждой карты — в прямом и перевёрнутом положении, в любви и работе — в <a href="/taro/">справочнике значений карт Таро</a>.</p></section>
-{cta("Разбор по картам Таро", "Хочешь подробнее? Задай вопрос в боте MyLineLife и получи расклад Таро прямо в Telegram.", "seo_taro_arkan", "🎴 Сделать расклад")}
+{cta("Код судьбы по дате рождения", "В боте MyLineLife есть подробный разбор по дате рождения — «Код судьбы» — и проверка совместимости пары.", "seo_taro_arkan", "🔢 Узнать код судьбы")}
 {faq_html(qa)}
 <p class="muted">Расчёт аркана — развлекательная практика на стыке Таро и нумерологии, а не предсказание.</p>
 <script>
 (function(){{var A={json.dumps(data, ensure_ascii=False)};var f=document.getElementById('ark'),o=document.getElementById('ark-out');
 function r(n){{while(n>22)n-=22;return n}}
 function card(t,n){{var c=A[n];return '<div class="daily-in"><div class="eyebrow">'+t+'</div><h3><a href="/taro/'+c.s+'/">'+n+'. '+c.n+'</a></h3><p>'+c.p+'</p></div>'}}
-var B='<p><a class="btn btn-gold btn-sm" href="{bot("arkan_result")}">🎴 Расклад Таро на свой вопрос</a></p>';
+var B='<p><a class="btn btn-gold btn-sm" href="{bot("arkan_result")}">🔢 Код судьбы по дате рождения в боте</a></p>';
 f.addEventListener('submit',function(){{var v=document.getElementById('ark-d').value;if(!v)return;var p=v.split('-');var d=+p[2];
 var s=v.replace(/\\D/g,'').split('').reduce(function(a,x){{return a+ +x}},0);
 o.innerHTML=card('Аркан личности (по дню рождения)',r(d))+card('Аркан судьбы (сумма цифр даты: '+s+')',r(s))+B;
@@ -974,7 +975,7 @@ el.innerHTML='<button class="btn" type="button" id="kd-btn">🔮 Вытянут�
 <script>
 (function(){{var C={json.dumps(data, ensure_ascii=False)};var el=document.getElementById('rd');if(!el)return;
 function show(){{var d=new Date();var seed=d.getFullYear()*1000+(d.getMonth()+1)*40+d.getDate();var c=C[(seed*104729+11)%C.length];
-el.innerHTML='<div class="daily-in"><div class="eyebrow">Руна дня · '+d.toLocaleDateString('ru-RU',{{day:'numeric',month:'long'}})+'</div><h3><a href="/runy/'+c.s+'/">'+c.y+' '+c.n+'</a></h3><p class="note">'+c.k.join(' · ')+'</p><p><b>Совет дня.</b> '+c.a+'</p><p><b>В любви.</b> '+c.l+'</p><p><b>В работе.</b> '+c.w+'</p><p class="note"><a href="/runy/'+c.s+'/">Полное значение руны →</a></p><p><a class="btn btn-gold btn-sm" href="{bot("rd_result")}">ᚠ Гадание на рунах в боте</a></p></div>';}}
+el.innerHTML='<div class="daily-in"><div class="eyebrow">Руна дня · '+d.toLocaleDateString('ru-RU',{{day:'numeric',month:'long'}})+'</div><h3><a href="/runy/'+c.s+'/">'+c.y+' '+c.n+'</a></h3><p class="note">'+c.k.join(' · ')+'</p><p><b>Совет дня.</b> '+c.a+'</p><p><b>В любви.</b> '+c.l+'</p><p><b>В работе.</b> '+c.w+'</p><p class="note"><a href="/runy/'+c.s+'/">Полное значение руны →</a></p><p><a class="btn btn-gold btn-sm" href="{bot("rd_result")}">ᚠ Руна дня в боте каждое утро</a></p></div>';}}
 el.innerHTML='<button class="btn" type="button" id="rd-btn">ᚠ Вытянуть руну дня</button>';document.getElementById('rd-btn').addEventListener('click',show);
 }})();
 </script>"""

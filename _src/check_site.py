@@ -16,6 +16,10 @@ MIN_WORDS = {
 MODIFIED_AFTER_BASE = list(MIN_WORDS) + ["hiromantiya/liniya-serdca", "hiromantiya/liniya-zhizni", "runy/odin"]
 
 
+sys.path.insert(0, os.path.dirname(__file__))
+from bot_links import check_start  # noqa: E402
+
+
 def text_of(h):
     h = re.sub(r"<script.*?</script>|<style.*?</style>", " ", h, flags=re.S)
     return re.sub(r"<[^>]+>", " ", h)
@@ -62,6 +66,10 @@ def main():
         for href in set(re.findall(r'href="([^"]+)"', nojs)):
             if (href.startswith("/") or href.startswith(SITE)) and not exists(href):
                 errs.append(f"{name}: битая ссылка {href}")
+        for pl in set(re.findall(r"t\.me/mylinelife_bot\?start=([^\"'& <]+)", h)):
+            e = check_start(pl)
+            if e:
+                errs.append(f"{name}: ссылка на бота start={pl}: {e}")
         need = MIN_WORDS.get(rel)
         if need:
             n = len(text_of(h).split())
