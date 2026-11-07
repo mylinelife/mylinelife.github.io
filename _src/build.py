@@ -41,6 +41,12 @@ for _s in WORK:
     MODIFIED.setdefault(f"/taro/{_s}/", "2026-11-08")
 
 
+# народные названия линий, которые часто ищут (Вордстат, GSC)
+PALM_ALIAS = {"liniya-serdca": "линия любви", "liniya-golovy": "линия ума"}
+for _s in PALM_ALIAS:
+    MODIFIED[f"/hiromantiya/{_s}/"] = "2026-11-08"
+
+
 def mod_iso(url):
     """Дата последнего изменения страницы: общая TODAY, если страницу не правили позже."""
     return MODIFIED.get(url, TODAY)
@@ -578,9 +584,10 @@ def sign_pages():
 def palm_pages():
     for p in PALM:
         url = f"/hiromantiya/{p['slug']}/"
-        title = f"{p['name']} на руке: значение, где находится, виды — MyLineLife"
+        nm = f"{p['name']} ({PALM_ALIAS[p['slug']]})" if p['slug'] in PALM_ALIAS else p['name']
+        title = f"{nm} на руке: значение, где находится, виды — MyLineLife"
         desc = f"{p['name']} на ладони: где находится и как её читать в хиромантии. Длинная, короткая, прерывистая, раздвоенная — значения с примерами."
-        h1 = f"{p['name']} на руке: где находится и что означает"
+        h1 = f"{nm} на руке: где находится и что означает"
         cr = [("Главная", "/"), ("Хиромантия", "/hiromantiya/"), (p["name"], url)]
         variants = ''.join(f'<section class="card"><h3>{E(v)}</h3><p>{E(t)}</p></section>' for v, t in p["variants"])
         others = ''.join(f'<a class="chip" href="/hiromantiya/{o["slug"]}/">{o["name"]}</a>' for o in PALM if o is not p)
