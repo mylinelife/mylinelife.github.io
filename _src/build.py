@@ -410,7 +410,7 @@ def daily_script():
     return """<script>
 (function(){var C=%s;var el=document.getElementById('daily');if(!el)return;
 var d=new Date();var seed=d.getFullYear()*1000+(d.getMonth()+1)*40+d.getDate();var c=C[(seed*7919)%%C.length];
-el.innerHTML='<div class="daily-in"><div class="eyebrow">Карта дня · '+d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})+'</div><h3><a href="/taro/'+c.s+'/">'+c.n+'</a></h3><p>'+c.a+'</p><p class="note">'+c.k.join(' · ')+' — <a href="/taro/'+c.s+'/">читать значение</a></p></div>';
+el.innerHTML='<div class="daily-in"><div class="eyebrow">Карта дня · '+d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})+'</div><h3><a href="/taro/'+c.s+'/">'+c.n+'</a></h3><p>'+c.a+'</p><p class="note">'+c.k.join(' · ')+' — <a href="/taro/'+c.s+'/">читать значение</a></p><p><a class="btn btn-gold btn-sm" href="https://t.me/mylinelife_bot?start=src_daily_result">🔮 Задать свой вопрос картам</a></p></div>';
 })();
 </script>""" % json.dumps(data, ensure_ascii=False)
 
@@ -687,9 +687,10 @@ def arkan_page():
 (function(){{var A={json.dumps(data, ensure_ascii=False)};var f=document.getElementById('ark'),o=document.getElementById('ark-out');
 function r(n){{while(n>22)n-=22;return n}}
 function card(t,n){{var c=A[n];return '<div class="daily-in"><div class="eyebrow">'+t+'</div><h3><a href="/taro/'+c.s+'/">'+n+'. '+c.n+'</a></h3><p>'+c.p+'</p></div>'}}
+var B='<p><a class="btn btn-gold btn-sm" href="{bot("arkan_result")}">🎴 Расклад Таро на свой вопрос</a></p>';
 f.addEventListener('submit',function(){{var v=document.getElementById('ark-d').value;if(!v)return;var p=v.split('-');var d=+p[2];
 var s=v.replace(/\\D/g,'').split('').reduce(function(a,x){{return a+ +x}},0);
-o.innerHTML=card('Аркан личности (по дню рождения)',r(d))+card('Аркан судьбы (сумма цифр даты: '+s+')',r(s));
+o.innerHTML=card('Аркан личности (по дню рождения)',r(d))+card('Аркан судьбы (сумма цифр даты: '+s+')',r(s))+B;
 if(window.ym)ym(113777002,'reachGoal','arkan_calc');}});
 }})();
 </script>"""
@@ -934,7 +935,7 @@ def day_pages():
 <script>
 (function(){{var C={json.dumps(data, ensure_ascii=False)};var el=document.getElementById('kd');if(!el)return;
 function show(){{var d=new Date();var seed=d.getFullYear()*1000+(d.getMonth()+1)*40+d.getDate();var c=C[(seed*7919)%C.length];
-el.innerHTML='<div class="daily-in"><div class="eyebrow">Карта дня · '+d.toLocaleDateString('ru-RU',{{day:'numeric',month:'long'}})+'</div><h3><a href="/taro/'+c.s+'/">'+c.n+'</a></h3><p class="note">'+c.k.join(' · ')+'</p><p><b>Совет дня.</b> '+c.a+'</p><p><b>В любви.</b> '+c.l+'</p><p><b>В работе.</b> '+c.w+'</p><p class="note"><a href="/taro/'+c.s+'/">Полное значение карты →</a></p></div>';}}
+el.innerHTML='<div class="daily-in"><div class="eyebrow">Карта дня · '+d.toLocaleDateString('ru-RU',{{day:'numeric',month:'long'}})+'</div><h3><a href="/taro/'+c.s+'/">'+c.n+'</a></h3><p class="note">'+c.k.join(' · ')+'</p><p><b>Совет дня.</b> '+c.a+'</p><p><b>В любви.</b> '+c.l+'</p><p><b>В работе.</b> '+c.w+'</p><p class="note"><a href="/taro/'+c.s+'/">Полное значение карты →</a></p><p><a class="btn btn-gold btn-sm" href="{bot("kd_result")}">🎴 Расклад на свой вопрос в боте</a></p></div>';}}
 el.innerHTML='<button class="btn" type="button" id="kd-btn">🔮 Вытянуть карту дня</button>';document.getElementById('kd-btn').addEventListener('click',show);
 }})();
 </script>"""
@@ -973,7 +974,7 @@ el.innerHTML='<button class="btn" type="button" id="kd-btn">🔮 Вытянут�
 <script>
 (function(){{var C={json.dumps(data, ensure_ascii=False)};var el=document.getElementById('rd');if(!el)return;
 function show(){{var d=new Date();var seed=d.getFullYear()*1000+(d.getMonth()+1)*40+d.getDate();var c=C[(seed*104729+11)%C.length];
-el.innerHTML='<div class="daily-in"><div class="eyebrow">Руна дня · '+d.toLocaleDateString('ru-RU',{{day:'numeric',month:'long'}})+'</div><h3><a href="/runy/'+c.s+'/">'+c.y+' '+c.n+'</a></h3><p class="note">'+c.k.join(' · ')+'</p><p><b>Совет дня.</b> '+c.a+'</p><p><b>В любви.</b> '+c.l+'</p><p><b>В работе.</b> '+c.w+'</p><p class="note"><a href="/runy/'+c.s+'/">Полное значение руны →</a></p></div>';}}
+el.innerHTML='<div class="daily-in"><div class="eyebrow">Руна дня · '+d.toLocaleDateString('ru-RU',{{day:'numeric',month:'long'}})+'</div><h3><a href="/runy/'+c.s+'/">'+c.y+' '+c.n+'</a></h3><p class="note">'+c.k.join(' · ')+'</p><p><b>Совет дня.</b> '+c.a+'</p><p><b>В любви.</b> '+c.l+'</p><p><b>В работе.</b> '+c.w+'</p><p class="note"><a href="/runy/'+c.s+'/">Полное значение руны →</a></p><p><a class="btn btn-gold btn-sm" href="{bot("rd_result")}">ᚠ Гадание на рунах в боте</a></p></div>';}}
 el.innerHTML='<button class="btn" type="button" id="rd-btn">ᚠ Вытянуть руну дня</button>';document.getElementById('rd-btn').addEventListener('click',show);
 }})();
 </script>"""
