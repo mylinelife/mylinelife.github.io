@@ -20,7 +20,7 @@ from data_runes_extra1 import EXTRA1
 from data_runes_extra2 import EXTRA2
 from data_runes_extra3 import PRACTICE
 RUNE_X = {**EXTRA1, **EXTRA2}
-from data_hubs_extra import SUIT_X, RUNES_HUB_X, PALM_X
+from data_hubs_extra import SUIT_X, RUNES_HUB_X, PALM_X, PALM_SHOWS
 from data_minor import MINOR, SUITS
 from data_deepen import RUNE_DEEP, CARD_DEEP, DAY_DEEP, MODIFIED
 import data_arkan
@@ -56,6 +56,17 @@ def mod_iso(url):
 def mod_ru(url):
     y, m, d = mod_iso(url).split("-")
     return f"{int(d)} {RU_MONTHS[int(m)]} {y}"
+
+
+def summary_table(title, head, rows):
+    """Сводная таблица хаба: короткие ответы, которые удобно цитировать поиску и ИИ-ответам."""
+    th = "".join(f"<th scope=\"col\">{h}</th>" for h in head)
+    tr = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows)
+    return f'<section class="card prose"><h2>{title}</h2><div class="tbl"><table><thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></div></section>'
+
+
+def first_sentence(t):
+    return t.split(". ")[0].rstrip(".") + "."
 
 
 def deep_html(d):
@@ -392,6 +403,7 @@ def tarot_pages():
   <p class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро на сегодня →</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет →</a><a class="chip" href="/taro/arkan-po-date-rozhdeniya/">🔢 Аркан по дате рождения →</a></p>
 </section>
 <section><h2>Старшие арканы</h2><p class="muted">Большие жизненные темы и этапы</p><div class="grid tiles">{''.join(tile(c, c['num']) for c in TAROT)}</div></section>
+{summary_table('Таблица: значение 22 старших арканов', ['№', 'Карта', 'Ключевые слова', 'Да или нет'], [(c['num'], f'<a href="/taro/{c["slug"]}/">{c["name"]}</a>', ', '.join(c['kw'][:3]), c['yesno']) for c in TAROT])}
 {suits_html}
 <section class="prose card">
   <h2>Как читать карты Таро</h2>
@@ -529,6 +541,7 @@ def rune_pages():
 <p class="chips"><a class="chip" href="/runy/runa-dnya/">ᚠ Руна дня на сегодня: гадание на рунах онлайн →</a></p>
 {groups}
 <section><a class="card tile" href="/runy/odin/"><span class="rs">◯</span><h3>Пустая руна (руна Одина)</h3><p>Современное дополнение к набору</p></a></section>
+{summary_table('Таблица: значение всех 24 рун', ['Руна', 'Значение', 'Ключевые слова', 'Перевёрнутая'], [(f'<a href="/runy/{r["slug"]}/">{r["sym"]} {r["name"]}</a>', r['meaning'], ', '.join(r['kw'][:3]), first_sentence(r['reversed']) if r['rev'] else 'нет, руна симметрична') for r in RUNES])}
 <section class="prose card"><h2>История Старшего Футарка</h2><p>{RUNES_HUB_X['history']}</p></section>
 <section class="prose card"><h2>Три эттира и их смысл</h2><p>{RUNES_HUB_X['aetts']}</p></section>
 <section class="prose card"><h2>Простые расклады на рунах</h2><p>{RUNES_HUB_X['spreads']}</p></section>
@@ -634,6 +647,7 @@ def palm_pages():
 </section>
 <section><div class="grid tiles g2">{tiles}</div></section>
 <section><h2>Второстепенные линии</h2><div class="grid tiles g2">{minor_tiles}</div></section>
+{summary_table("Таблица: линии на руке и их значение", ["Линия", "Где находится", "Что показывает"], [(f'<a href="/hiromantiya/{p["slug"]}/">{p["name"]}</a>', first_sentence(p["where"]), PALM_SHOWS[p["slug"]]) for p in PALM])}
 <section><h2>Знаки и особенности линий</h2><div class="chips">{''.join(f'<a class="chip" href="/hiromantiya/{o["slug"]}/">{o["h1"].split(":")[0]}</a>' for o in SIGNS)}</div></section>
 <section class="prose card">
   <h2>Как сфотографировать ладонь для гадания</h2>
