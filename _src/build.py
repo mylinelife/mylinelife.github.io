@@ -33,6 +33,7 @@ PINTEREST = "https://ru.pinterest.com/mylinelife_bot/"
 TODAY = "2026-10-24"
 TODAY_RU = "24 октября 2026"
 CSS_V = "14"
+CSS_INLINE = open(os.path.join(ROOT, "assets", "style.css"), encoding="utf8").read().strip()
 E = html.escape
 RU_MONTHS = ["", "января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"]
 for _s in WORK:
@@ -161,9 +162,11 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="preload" href="/assets/fonts/manrope-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/cormorant-garamond-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/style.css?v={CSS_V}">
+<link rel="preload" href="/assets/fonts/manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/cormorant-garamond-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://mc.yandex.ru">
+<style>{CSS_INLINE}</style>
 {ld(gr) if gr else ""}
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
