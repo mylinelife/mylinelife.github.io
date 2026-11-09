@@ -707,7 +707,6 @@ def arkan_page():
 <section class="prose card"><h2>Значение 22 старших арканов по дате рождения</h2><ul class="combos">{rows}</ul><p>Подробное толкование каждой карты — в прямом и перевёрнутом положении, в любви и работе — в <a href="/taro/">справочнике значений карт Таро</a>.</p></section>
 {cta("Код судьбы по дате рождения", "В боте MyLineLife есть подробный разбор по дате рождения — «Код судьбы» — и проверка совместимости пары.", "seo_taro_arkan", "🔢 Узнать код судьбы")}
 {faq_html(qa)}
-<p class="muted">Расчёт аркана — развлекательная практика на стыке Таро и нумерологии, а не предсказание.</p>
 <script>
 (function(){{var A={json.dumps(data, ensure_ascii=False)};var f=document.getElementById('ark'),o=document.getElementById('ark-out');
 function r(n){{while(n>22)n-=22;return n}}
@@ -759,8 +758,7 @@ def home():
     qa = [("Как погадать по ладони по фото?", "Открой бота @mylinelife_bot в Telegram, нажми «Старт» и отправь фото ладони при хорошем освещении. Бот разберёт основные линии: жизни, сердца, головы и судьбы."),
           ("Это бесплатно?", "Карта дня и руна дня бесплатны каждый день. Подробные расклады и полный разбор ладони — платные."),
           ("Какую руку фотографировать?", "Ведущую: правую, если ты правша, и левую, если левша. Ладонь раскрыта, пальцы слегка разведены, свет ровный, без резких теней."),
-          ("Что происходит с моим фото?", "Фото используется только для разбора ладони. Подробно — в политике обработки персональных данных на сайте."),
-          ("Это настоящее предсказание?", "Нет. MyLineLife — развлекательный сервис. Расклады и разборы — повод взглянуть на ситуацию по-новому, а не прогноз будущего.")]
+          ("Что происходит с моим фото?", "Фото используется только для разбора ладони. Подробно — в политике обработки персональных данных на сайте."),]
     tarot_chips = ''.join(f'<a class="chip" href="/taro/{c["slug"]}/">{c["name"]}</a>' for c in TAROT[:12])
     rune_chips = ''.join(f'<a class="chip" href="/runy/{r["slug"]}/"><b>{r["sym"]}</b> {r["name"]}</a>' for r in RUNES[:12])
     body = f"""<section class="hero">
@@ -946,7 +944,7 @@ def yesno_page():
 <section><h2>Карты, где ответ неоднозначен</h2><p class="muted">{len(G['maybe'])} карт: ответ зависит от обстоятельств</p><div class="chips">{chips(G['maybe'])}</div></section>
 {cta("Нужен точный ответ?", "Одна карта отвечает коротко. В боте MyLineLife можно сделать полный расклад Таро на свой вопрос, а карта дня бесплатна каждое утро.", "seo_taro_yesno", "🎴 Сделать расклад")}
 {faq_html(qa)}
-<p class="muted">Таро — развлекательный сервис, а не предсказание. Не принимай по картам важные решения о здоровье, деньгах и безопасности.</p>
+<p class="muted">Не принимай по картам важные решения о здоровье, деньгах и безопасности.</p>
 <script>
 (function(){{var C={js};var b=document.getElementById('yn-btn'),o=document.getElementById('yn-out');if(!b)return;
 var L={{yes:'Да',no:'Нет',maybe:'Не так просто'}};
@@ -987,7 +985,7 @@ def day_pages():
 <section><h2>Значения карт дня: старшие арканы</h2><div class="chips">{chips}<a class="chip more" href="/taro/">Все 78 карт →</a></div></section>
 {cta("Карта дня каждое утро", "Подпишись на канал или открой бота: карта дня и руна дня бесплатно каждое утро, а полный расклад на свой вопрос можно сделать в боте MyLineLife.", "seo_taro_karta_dnya", "🎴 Получить карту дня")}
 {faq_html(qa)}
-<p class="muted">Таро — развлекательный сервис, а не предсказание. Карта дня не заменяет советов специалистов.</p>
+<p class="muted">Карта дня не заменяет советов специалистов.</p>
 <script>
 (function(){{var C={json.dumps(data, ensure_ascii=False)};var el=document.getElementById('kd');if(!el)return;
 function show(){{var d=new Date();var seed=d.getFullYear()*1000+(d.getMonth()+1)*40+d.getDate();var c=C[(seed*7919)%C.length];
@@ -1026,7 +1024,7 @@ el.innerHTML='<button class="btn" type="button" id="kd-btn">🔮 Вытянут�
 <section><h2>Значения рун</h2><div class="chips">{chips}</div></section>
 {cta("Руна дня каждое утро", "Подпишись на канал или открой бота: руна дня и карта дня бесплатно каждое утро, а гадание на рунах на свой вопрос можно сделать в боте MyLineLife.", "seo_runa_dnya", "ᚠ Получить руну дня")}
 {faq_html(qa)}
-<p class="muted">Руны — развлекательный сервис, а не предсказание.</p>
+
 <script>
 (function(){{var C={json.dumps(data, ensure_ascii=False)};var el=document.getElementById('rd');if(!el)return;
 function show(){{var d=new Date();var seed=d.getFullYear()*1000+(d.getMonth()+1)*40+d.getDate();var c=C[(seed*104729+11)%C.length];
