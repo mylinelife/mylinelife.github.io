@@ -228,7 +228,7 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
     <div><b>Хиромантия</b><a href="/hiromantiya/">Линии на руке</a>{''.join(f'<a href="/hiromantiya/{p["slug"]}/">{p["name"]}</a>' for p in PALM)}</div>
     <div><b>MyLineLife</b><a href="{bot('site_footer')}">Бот в Telegram</a><a href="{CHANNEL}">Канал с картой дня</a><a href="{VK}">Группа ВКонтакте</a><a href="{PINTEREST}">Pinterest</a><a href="/o-proekte/">О проекте</a><a href="/privacy.html">Политика конфиденциальности</a></div>
   </nav>
-  <p class="disc"><span class="age">18+</span> MyLineLife — развлекательный сервис. Материалы сайта и бота не являются предсказанием, медицинской, психологической, юридической или финансовой консультацией.</p>
+  <p class="disc">Материалы сайта и бота MyLineLife не являются медицинской, психологической, юридической или финансовой консультацией.</p>
   <p class="disc">© 2026 MyLineLife</p>
 </footer>
 </div>
@@ -255,7 +255,7 @@ def cta(title, text, src, label="🔮 Открыть MyLineLife в Telegram"):
   <h2>{title}</h2>
   <p>{text}</p>
   <a class="btn btn-gold" href="{bot(src)}">{label}</a>
-  <p class="note">Карта дня и руна дня — бесплатно. 18+</p>
+  <p class="note">Карта дня и руна дня — бесплатно.</p>
 </aside>"""
 
 
@@ -773,7 +773,7 @@ def home():
       <a class="btn btn-ghost" href="{CHANNEL}">Канал с картой дня</a>
       <a class="btn btn-ghost" href="{VK}">Мы ВКонтакте</a>
     </div>
-    <p class="note">Без регистрации и приложений — всё внутри Telegram. 18+</p>
+    <p class="note">Без регистрации и приложений — всё внутри Telegram.</p>
   </div>
   <div class="palm">{palm_svg()}</div>
 </section>
@@ -828,7 +828,7 @@ def home():
               "sameAs": [BOT, CHANNEL, VK, PINTEREST, "https://dzen.ru/id/6ad4d6414cf8164d988038d2"]},
              faq_ld(qa)]
     page("/", "Гадание по ладони по фото онлайн, Таро и руны — MyLineLife",
-         "Гадание по ладони по фото, на Таро и рунах онлайн бесплатно в Telegram: сфотографируй руку и узнай, что говорят линии. Карта дня и руна дня. 18+",
+         "Гадание по ладони по фото, на Таро и рунах онлайн бесплатно в Telegram: сфотографируй руку и узнай, что говорят линии. Карта дня и руна дня.",
          body, graph, og_type="website", priority="1.0", freq="daily")
 
 
