@@ -11,6 +11,8 @@ FEATURE_BY_SRC = [
     ("seo_taro_", "tarot"), ("kd_result", "tarot"), ("daily_result", "tarot"),
     ("seo_runa_", "rune_day"), ("seo_runy_", "rune_day"), ("rd_result", "rune_day"),
     ("seo_palm_", "palm"), ("site_hero", "palm"),
+    ("llm_palm", "palm"), ("llm_tarot", "tarot"), ("llm_card", "card_day"), ("llm_rune", "rune_day"),
+    ("llm_compat", "compat"), ("llm_num", "numerology"),
 ]
 START_RE = re.compile(r"^(?:([a-z_]+)__)?src_([A-Za-z0-9_-]+)$")
 

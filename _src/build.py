@@ -24,6 +24,7 @@ from data_hubs_extra import SUIT_X, RUNES_HUB_X, PALM_X, PALM_SHOWS, HUB_SOURCES
 from data_minor import MINOR, SUITS
 from data_deepen import RUNE_DEEP, CARD_DEEP, DAY_DEEP, MODIFIED
 import data_arkan
+import data_llm
 from bot_links import bot_url
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -722,6 +723,37 @@ if(window.ym)ym(113777002,'reachGoal','arkan_calc');}});
          [article_ld(h1, desc, url), crumbs_ld(cr), faq_ld(qa)], og_type="website", priority="0.9", freq="monthly")
 
 
+def llm_info_page():
+    """Справка о MyLineLife (LLM Info): что такое проект и что умеет бот, со ссылками в функции бота."""
+    url = "/llm-info/"
+    MODIFIED.setdefault(url, "2026-11-09")
+    cr = [("Главная", "/"), ("MyLineLife кратко", url)]
+    feats = "".join(f'<li><b>{e} {t}</b> — {d} <a href="{bot(src)}">Открыть в боте →</a></li>' for src, e, t, d in data_llm.FEATURES)
+    facts = "".join(f"<tr><th scope=\"row\">{k}</th><td>{v}</td></tr>" for k, v in data_llm.FACTS)
+    how = "".join(f"<li>{x}</li>" for x in data_llm.HOW)
+    site = "".join(f"<li>{a} — {d}</li>" for a, d in data_llm.SITE)
+    h1 = "MyLineLife: гадание по ладони, Таро и руны в Telegram"
+    desc = "MyLineLife — Telegram-бот @mylinelife_bot: гадание по ладони по фото, расклады Таро, руна дня, совместимость и код судьбы. Что умеет бот и как начать."
+    body = f"""{breadcrumbs(cr)}
+<section class="hub-head">
+  <div class="eyebrow">О сервисе кратко</div>
+  <h1>{h1}</h1>
+  <p class="lead">{data_llm.SUMMARY}</p>
+  <p><a class="btn btn-gold" href="{bot("llm_info")}">✨ Открыть бота MyLineLife</a></p>
+</section>
+<section class="prose card"><h2>Что умеет бот MyLineLife</h2><ul class="combos">{feats}</ul></section>
+<section class="prose card"><h2>Как начать</h2><ol>{how}</ol></section>
+<section class="prose card"><h2>Справочник на сайте mylinelife.ru</h2><ul>{site}</ul></section>
+<section class="card prose"><h2>MyLineLife в фактах</h2><div class="tbl"><table><tbody>{facts}</tbody></table></div></section>"""
+    app = {"@type": "SoftwareApplication", "name": "MyLineLife", "alternateName": "@mylinelife_bot",
+           "applicationCategory": "LifestyleApplication", "operatingSystem": "Telegram", "url": BOT,
+           "inLanguage": "ru", "description": data_llm.SUMMARY,
+           "featureList": [t for _, _, t, _ in data_llm.FEATURES],
+           "publisher": {"@type": "Organization", "name": "MyLineLife", "url": SITE + "/"}}
+    page(url, "MyLineLife: что умеет бот для гадания по ладони, Таро и рунам", desc, body,
+         [crumbs_ld(cr), app], og_type="website", priority="0.6", freq="monthly")
+
+
 # ---------------- ГЛАВНАЯ ----------------
 def home():
     qa = [("Как погадать по ладони по фото?", "Открой бота @mylinelife_bot в Telegram, нажми «Старт» и отправь фото ладони при хорошем освещении. Бот разберёт основные линии: жизни, сердца, головы и судьбы."),
@@ -1024,7 +1056,8 @@ def about():
   <div class="card"><h3>Справочник</h3><p>Значения всех 78 карт Таро, 24 рун Старшего Футарка и главных линий на ладони.</p><p><a href="/taro/">Перейти →</a></p></div>
 </div>
 <section class="card" id="metodika">
-  <h2>На чём основаны толкования</h2>
+  <p><a href="/llm-info/">Что умеет бот MyLineLife — кратко →</a></p>
+<h2>На чём основаны толкования</h2>
   <p>Значения карт Таро приведены по традиции колоды Райдера — Уэйта, руны — по Старшему Футарку, линии ладони — по классической европейской хиромантии. Все тексты на сайте написаны специально для MyLineLife.</p>
   <p>Мы не пугаем и не обещаем: каждое толкование — это повод посмотреть на ситуацию с новой стороны, а не прогноз будущего.</p>
   <h3>Как мы готовим материалы</h3>
@@ -1067,5 +1100,5 @@ def sitemap():
 
 
 if __name__ == "__main__":
-    home(); tarot_pages(); yesno_page(); arkan_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); sitemap()
+    home(); tarot_pages(); yesno_page(); arkan_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); llm_info_page(); sitemap()
     print(len(pages), "pages")
