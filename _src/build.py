@@ -332,6 +332,7 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
       <h1>{h1}</h1>
       <p class="lead">{c['general']}</p>
       <ul class="kw">{''.join(f'<li>{k}</li>' for k in c['kw'])}</ul>
+      <p class="top-cta"><a class="btn btn-gold btn-sm" href="{bot('seo_taro_t_'+c['slug'])}">🃏 Расклад на 3 карты в боте</a></p>
     </div>
   </header>
   <p class="meta">Обновлено {mod_ru(url)} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
@@ -468,6 +469,7 @@ def rune_pages():
       <h1>{h1}</h1>
       <p class="lead">{r['general']}</p>
       <ul class="kw"><li>«{r['meaning']}»</li>{''.join(f'<li>{k}</li>' for k in r['kw'])}</ul>
+      <p class="top-cta"><a class="btn btn-gold btn-sm" href="{bot('seo_runa_t_'+r['slug'])}">ᛟ Руна дня в боте</a></p>
     </div>
   </header>
   <p class="meta">Обновлено {mod_ru(url)} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
@@ -592,6 +594,7 @@ def sign_pages():
       <div class="eyebrow">Хиромантия</div>
       <h1>{g['h1']}</h1>
       <p class="lead">{g['lead']}</p>
+      <p class="top-cta"><a class="btn btn-gold btn-sm" href="{bot('seo_palm_t_'+g['slug'])}">🖐 Разобрать мою ладонь по фото</a></p>
     </div>
   </header>
   <p class="meta">Обновлено {mod_ru(url)} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
@@ -622,6 +625,7 @@ def palm_pages():
       <div class="eyebrow">Хиромантия</div>
       <h1>{h1}</h1>
       <p class="lead">{p['where']}</p>
+      <p class="top-cta"><a class="btn btn-gold btn-sm" href="{bot('seo_palm_t_'+p['slug'])}">🖐 Разобрать мою ладонь по фото</a></p>
     </div>
   </header>
   <p class="meta">Обновлено {mod_ru(url)} · Толкования составлены редакцией MyLineLife по классической традиции, <a href="/o-proekte/#metodika">как мы работаем</a></p>
