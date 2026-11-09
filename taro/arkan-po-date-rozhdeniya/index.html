@@ -187,7 +187,7 @@ footer{padding:40px 0 50px;color:var(--muted);font-size:14px;border-top:1px soli
         for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
         k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
     })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113777002', 'ym');
-    ym(113777002, 'init', {ssr:true, clickmap:true, referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    ym(113777002, 'init', {ssr:true, clickmap:true, referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true, webvisor:true});
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/113777002" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
@@ -211,7 +211,7 @@ footer{padding:40px 0 50px;color:var(--muted);font-size:14px;border-top:1px soli
   <p class="meta">Обновлено 8 ноября 2026 · Редакция MyLineLife, <a href="/o-proekte/#metodika">как мы работаем</a></p>
   <form class="daily arkan-form" id="ark" onsubmit="return false">
     <label for="ark-d">Дата рождения</label>
-    <input type="date" id="ark-d" min="1900-01-01" max="2026-12-31" required>
+    <input type="date" id="ark-d" class="ym-disable-keys ym-hide-content" min="1900-01-01" max="2026-12-31" required>
     <button class="btn btn-gold" type="submit">Рассчитать аркан</button>
     <div id="ark-out" aria-live="polite"></div>
   </form>
