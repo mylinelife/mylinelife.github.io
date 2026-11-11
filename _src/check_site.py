@@ -11,6 +11,10 @@ MIN_WORDS = {
     **{f"runy/{s}": 850 for s in ("turisaz", "yera", "otala")},
     **{f"taro/{s}": 800 for s in ("troyka-zhezlov", "dvoyka-zhezlov", "desyatka-mechey", "desyatka-zhezlov")},
     "runy/runa-dnya": 700, "taro/karta-dnya": 700, "hiromantiya": 750,
+    # пачка 11.11.2026
+    **{f"taro/{s}": 850 for s in ("ierofant", "smert", "umerennost", "imperator", "sila")},
+    **{f"runy/{s}": 850 for s in ("mannaz", "hagalaz", "dagaz", "nautiz")},
+    "hiromantiya/liniya-braka": 750,
 }
 # страницы, правленные после 24.10: lastmod в sitemap должен быть новее общего
 MODIFIED_AFTER_BASE = list(MIN_WORDS) + ["hiromantiya/liniya-serdca", "hiromantiya/liniya-zhizni", "runy/odin"]

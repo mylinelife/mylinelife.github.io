@@ -22,7 +22,7 @@ from data_runes_extra3 import PRACTICE
 RUNE_X = {**EXTRA1, **EXTRA2}
 from data_hubs_extra import SUIT_X, RUNES_HUB_X, PALM_X, PALM_SHOWS, HUB_SOURCES
 from data_minor import MINOR, SUITS
-from data_deepen import RUNE_DEEP, CARD_DEEP, DAY_DEEP, MODIFIED
+from data_deepen import RUNE_DEEP, CARD_DEEP, DAY_DEEP, PALM_DEEP, MODIFIED
 import data_arkan
 import data_llm
 from bot_links import bot_url
@@ -636,10 +636,11 @@ def palm_pages():
   <p class="muted">Хиромантия — традиция толкования линий руки, а не научный метод. Толкования приведены в развлекательных целях.</p>
 </article>
 {cta(f"Что говорит твоя {p['name'].lower()}?", "Пришли фото ладони в бот MyLineLife — и получи разбор линий прямо в Telegram.", f"seo_palm_{p['slug']}", "🖐 Прочитать мою ладонь")}
-{faq_html(p['faq'])}
+{deep_html(PALM_DEEP.get(p["slug"]))}
+{faq_html(p["faq"] + PALM_DEEP.get(p["slug"], {}).get("faq", []))}
 <section><h2>Другие линии на ладони</h2><div class="chips">{others}</div></section>
 <section><h2>Знаки и особенности линий</h2><div class="chips">{''.join(f'<a class="chip" href="/hiromantiya/{o["slug"]}/">{o["h1"].split(":")[0]}</a>' for o in SIGNS)}</div></section>"""
-        page(url, title, desc, body, [article_ld(h1, desc, url), crumbs_ld(cr), faq_ld(p["faq"])], priority="0.8")
+        page(url, title, desc, body, [article_ld(h1, desc, url), crumbs_ld(cr), faq_ld(p["faq"] + PALM_DEEP.get(p["slug"], {}).get("faq", []))], priority="0.8")
 
     url = "/hiromantiya/"
     cr = [("Главная", "/"), ("Хиромантия", url)]
