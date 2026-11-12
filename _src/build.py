@@ -25,6 +25,7 @@ from data_minor import MINOR, SUITS
 from data_deepen import RUNE_DEEP, CARD_DEEP, DAY_DEEP, PALM_DEEP, MODIFIED
 import data_arkan
 import data_llm
+import data_compat
 from bot_links import bot_url
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -408,7 +409,7 @@ def tarot_pages():
   <h1>Значение карт Таро: все 78 карт</h1>
   <p class="lead">Толкования всех карт колоды Таро: 22 старших аркана и 56 младших в четырёх мастях. Для каждой карты — прямое и перевёрнутое положение, любовь, работа, совет и ответ «да или нет».</p>
   <div class="daily" id="daily"></div>
-  <p class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро на сегодня →</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет →</a><a class="chip" href="/taro/arkan-po-date-rozhdeniya/">🔢 Аркан по дате рождения →</a></p>
+  <p class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро на сегодня →</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет →</a><a class="chip" href="/taro/arkan-po-date-rozhdeniya/">🔢 Аркан по дате рождения →</a><a class="chip" href="/sovmestimost-po-date-rozhdeniya/">👩‍❤️‍👨 Совместимость по дате рождения →</a></p>
 </section>
 <section><h2>Старшие арканы</h2><p class="muted">Большие жизненные темы и этапы</p><div class="grid tiles">{''.join(tile(c, c['num']) for c in TAROT)}</div></section>
 {summary_table('Таблица: значение 22 старших арканов', ['№', 'Карта', 'Ключевые слова', 'Да или нет'], [(c['num'], f'<a href="/taro/{c["slug"]}/">{c["name"]}</a>', ', '.join(c['kw'][:3]), c['yesno']) for c in TAROT])}
@@ -758,6 +759,57 @@ def llm_info_page():
          [crumbs_ld(cr), app], og_type="website", priority="0.6", freq="monthly")
 
 
+def compat_page():
+    """Калькулятор совместимости по дате рождения: числа судьбы партнёров и число пары (1–9)."""
+    url = "/sovmestimost-po-date-rozhdeniya/"
+    MODIFIED.setdefault(url, "2026-11-12")
+    cr = [("Главная", "/"), ("Совместимость по дате рождения", url)]
+    data = {"p": data_compat.PERSON, "c": {k: [t, d] for k, (t, d) in data_compat.PAIR.items()}}
+    secs = "".join(f'<section class="prose card"><h2>{h}</h2>' + "".join(f"<p>{x}</p>" for x in t.split("\n\n")) + "</section>" for h, t in data_compat.SECTIONS)
+    table = summary_table("Таблица: значение числа пары от 1 до 9", ["Число пары", "Союз", "Коротко"],
+                          [(n, t, first_sentence(d)) for n, (t, d) in data_compat.PAIR.items()])
+    persons = "".join(f"<li><b>{n}</b> — {t}</li>" for n, t in data_compat.PERSON.items())
+    qa = data_compat.FAQ
+    h1 = "Совместимость по дате рождения: рассчитать онлайн бесплатно"
+    desc = "Рассчитать совместимость по дате рождения онлайн бесплатно: число судьбы каждого партнёра, число пары и расшифровка союза. Как посчитать вручную и какие числа подходят друг другу."
+    body = f"""{breadcrumbs(cr)}
+<section class="hub-head">
+  <div class="eyebrow">Нумерология · калькулятор · бесплатно</div>
+  <h1>{h1}</h1>
+  <p class="lead">Введи даты рождения двух людей — калькулятор посчитает число судьбы каждого и число пары, а затем расскажет, на чём держится ваш союз и о чём стоит договориться.</p>
+  <p class="meta">Обновлено {mod_ru(url)} · Редакция MyLineLife, <a href="/o-proekte/#metodika">как мы работаем</a></p>
+  <form class="daily arkan-form" id="cmp" onsubmit="return false">
+    <label for="cmp-a">Твоя дата рождения</label>
+    <input type="date" id="cmp-a" class="ym-disable-keys ym-hide-content" min="1900-01-01" max="2026-12-31" required>
+    <label for="cmp-b">Дата рождения партнёра</label>
+    <input type="date" id="cmp-b" class="ym-disable-keys ym-hide-content" min="1900-01-01" max="2026-12-31" required>
+    <button class="btn btn-gold" type="submit">Рассчитать совместимость</button>
+    <div id="cmp-out" aria-live="polite"></div>
+  </form>
+</section>
+{secs}
+{table}
+<section class="prose card"><h2>Число судьбы: характер партнёра</h2><ul class="combos">{persons}</ul></section>
+{cta("Подробная совместимость пары", "В боте MyLineLife — развёрнутый разбор совместимости: сильные стороны союза, точки напряжения и что помогает быть вместе.", "seo_compat_page", "👩‍❤️‍👨 Проверить совместимость в боте")}
+{faq_html(qa)}
+<script>
+(function(){{var D={json.dumps(data, ensure_ascii=False)};
+function red(n){{while(n>9)n=String(n).split('').reduce(function(a,x){{return a+ +x}},0);return n}}
+function num(v){{return red(v.replace(/\\D/g,'').split('').reduce(function(a,x){{return a+ +x}},0))}}
+var f=document.getElementById('cmp'),o=document.getElementById('cmp-out');
+f.addEventListener('submit',function(){{var a=document.getElementById('cmp-a').value,b=document.getElementById('cmp-b').value;if(!a||!b)return;
+var x=num(a),y=num(b),c=red(x+y),C=D.c[c];
+o.innerHTML='<div class="daily-in"><div class="eyebrow">Твоё число судьбы: '+x+'</div><p>'+D.p[x]+'</p></div>'+
+'<div class="daily-in"><div class="eyebrow">Число партнёра: '+y+'</div><p>'+D.p[y]+'</p></div>'+
+'<div class="daily-in"><div class="eyebrow">Число пары: '+c+'</div><h3>'+C[0]+'</h3><p>'+C[1]+'</p>'+
+'<p><a class="btn btn-gold btn-sm" href="{bot("compat_result")}">👩‍❤️‍👨 Подробная совместимость в боте</a></p></div>';
+if(window.ym)ym(113777002,'reachGoal','compat_calc');}});
+}})();
+</script>"""
+    page(url, "Совместимость по дате рождения: рассчитать онлайн бесплатно — MyLineLife", desc, body,
+         [article_ld(h1, desc, url), crumbs_ld(cr), faq_ld(qa)], og_type="website", priority="0.9", freq="monthly")
+
+
 # ---------------- ГЛАВНАЯ ----------------
 def home():
     qa = [("Как погадать по ладони по фото?", "Открой бота @mylinelife_bot в Telegram, нажми «Старт» и отправь фото ладони при хорошем освещении. Бот разберёт основные линии: жизни, сердца, головы и судьбы."),
@@ -1103,5 +1155,5 @@ def sitemap():
 
 
 if __name__ == "__main__":
-    home(); tarot_pages(); yesno_page(); arkan_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); llm_info_page(); sitemap()
+    home(); tarot_pages(); yesno_page(); arkan_page(); compat_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); llm_info_page(); sitemap()
     print(len(pages), "pages")

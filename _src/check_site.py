@@ -15,6 +15,7 @@ MIN_WORDS = {
     **{f"taro/{s}": 850 for s in ("ierofant", "smert", "umerennost", "imperator", "sila")},
     **{f"runy/{s}": 850 for s in ("mannaz", "hagalaz", "dagaz", "nautiz")},
     "hiromantiya/liniya-braka": 750,
+    "sovmestimost-po-date-rozhdeniya": 1000,
 }
 # страницы, правленные после 24.10: lastmod в sitemap должен быть новее общего
 MODIFIED_AFTER_BASE = list(MIN_WORDS) + ["hiromantiya/liniya-serdca", "hiromantiya/liniya-zhizni", "runy/odin"]
