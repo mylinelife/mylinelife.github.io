@@ -22,7 +22,7 @@ from data_runes_extra3 import PRACTICE
 RUNE_X = {**EXTRA1, **EXTRA2}
 from data_hubs_extra import SUIT_X, RUNES_HUB_X, PALM_X, PALM_SHOWS, HUB_SOURCES
 from data_minor import MINOR, SUITS
-from data_deepen import RUNE_DEEP, CARD_DEEP, DAY_DEEP, PALM_DEEP, MODIFIED
+from data_deepen import RUNE_DEEP, CARD_DEEP, DAY_DEEP, PALM_DEEP, SUIT_DEEP, MODIFIED
 import data_arkan
 import data_llm
 import data_compat
@@ -154,7 +154,10 @@ def img_for(url):
     return None
 
 
-def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", freq="monthly", robots="index, follow", sitemap=True):
+def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", freq="monthly", robots="index, follow, max-image-preview:large, max-snippet:-1", sitemap=True):
+    for suf in (" — MyLineLife", " | MyLineLife"):
+        if len(title) > 70 and title.endswith(suf):
+            title = title[:-len(suf)]
     canon = SITE + url
     pimg = img_for(url) if og_type == "article" else None
     if pimg:
@@ -226,6 +229,7 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
   <nav class="foot-nav" aria-label="Карта сайта">
     <div><b>Таро</b><a href="/taro/">Значения карт</a><a href="/taro/{TAROT[0]['slug']}/">Шут</a><a href="/taro/smert/">Смерть</a><a href="/taro/zhezly/">Масть Жезлов</a><a href="/taro/kubki/">Масть Кубков</a><a href="/taro/mechi/">Масть Мечей</a><a href="/taro/pentakli/">Масть Пентаклей</a></div>
     <div><b>Руны</b><a href="/runy/">Значения рун</a><a href="/runy/fehu/">Феху</a><a href="/runy/algiz/">Альгиз</a><a href="/runy/gebo/">Гебо</a><a href="/runy/odin/">Руна Одина</a></div>
+    <div><b>Онлайн</b><a href="/taro/karta-dnya/">Карта дня</a><a href="/runy/runa-dnya/">Руна дня</a><a href="/taro/da-ili-net/">Таро да или нет</a><a href="/taro/arkan-po-date-rozhdeniya/">Аркан по дате рождения</a><a href="/sovmestimost-po-date-rozhdeniya/">Совместимость по дате рождения</a></div>
     <div><b>Хиромантия</b><a href="/hiromantiya/">Линии на руке</a>{''.join(f'<a href="/hiromantiya/{p["slug"]}/">{p["name"]}</a>' for p in PALM)}</div>
     <div><b>MyLineLife</b><a href="{bot('site_footer')}">Бот в Telegram</a><a href="{CHANNEL}">Канал с картой дня</a><a href="{VK}">Группа ВКонтакте</a><a href="{PINTEREST}">Pinterest</a><a href="/o-proekte/">О проекте</a><a href="/privacy.html">Политика конфиденциальности</a></div>
   </nav>
@@ -312,6 +316,8 @@ def card_page(c, deck, i, eyebrow, crumbs_mid, others_title, others, hub_url, hu
     url = f"/taro/{c['slug']}/"
     title = f"{c['name']}: значение карты Таро в любви | MyLineLife"
     desc = f"Значение карты {c['name']} в Таро: {', '.join(c['kw'][:3])}. Прямое и перевёрнутое положение, любовь, работа, совет и ответ «да или нет»."
+    if len(desc) > 160:
+        desc = desc.replace(", совет и ответ «да или нет»", " и совет")
     h1 = f"Карта Таро {c['name']}: значение и толкование"
     prev = deck[(i - 1) % n]; nxt = deck[(i + 1) % n]
     qa = [(f"Что означает карта {c['name']} в Таро?", c["general"]),
@@ -376,6 +382,7 @@ def tarot_pages():
         qa = [(f"Что означает масть {s['gen']} в Таро?", s["intro"]),
               (f"Сколько карт в масти {s['gen']}?", f"14 карт: от Туза до Десятки и четыре придворные карты — Паж, Рыцарь, Королева и Король {s['gen']}."),
               (f"Какой стихии соответствует масть {s['gen']}?", f"Стихия масти — {s['element'].lower()}. Её темы: {s['theme']}.")]
+        qa += SUIT_DEEP.get(s['slug'], {}).get('faq', [])
         others = ''.join(f'<a class="chip" href="/taro/{o["slug"]}/">{o["name"]}</a>' for o in SUITS if o is not s)
         body = f"""{breadcrumbs(cr)}
 <section class="hub-head">
@@ -383,10 +390,11 @@ def tarot_pages():
   <h1>Масть {s['gen']} в Таро: значение всех карт</h1>
   <p class="lead">{s['intro']}</p>
 </section>
-<section><div class="grid tiles">{''.join(tile(c, c['num']) for c in deck)}</div></section>
+<section><h2>Все карты масти {s['gen']}</h2><div class="grid tiles">{''.join(tile(c, c['num']) for c in deck)}</div></section>
 <section class="prose card"><h2>Числовые карты масти {s['gen']}</h2><p>{SUIT_X[s['slug']]['numbers']}</p></section>
 <section class="prose card"><h2>Придворные карты масти {s['gen']}</h2><p>{SUIT_X[s['slug']]['courts']}</p></section>
 <section class="prose card"><h2>Масть {s['gen']} в раскладе</h2><p>{SUIT_X[s['slug']]['spread']}</p></section>
+{deep_html(SUIT_DEEP.get(s['slug']))}
 {cta("Задай вопрос картам", "Расклад Таро на любовь, работу или выбор — в боте MyLineLife. Карта дня бесплатно каждое утро.", f"seo_taro_{s['slug']}", "🎴 Сделать расклад")}
 {faq_html(qa)}
 <section><h2>Другие масти и старшие арканы</h2><div class="chips">{others}<a class="chip" href="/taro/">Старшие арканы</a></div></section>"""
@@ -460,7 +468,7 @@ def rune_pages():
         qa += RUNE_DEEP.get(r['slug'], {}).get('faq', [])
         combos_html = "".join(f'<li><a href="/runy/{cs}/">{RUNE_BY[cs]["sym"]} {RUNE_BY[cs]["name"]}</a> — {ct}</li>' for cs, ct in x["combos"])
         cr = [("Главная", "/"), ("Значения рун", "/runy/"), (r["name"], url)]
-        others = ''.join(f'<a class="chip" href="/runy/{t["slug"]}/"><b>{t["sym"]}</b> {t["name"]}</a>' for t in RUNES if t is not r)
+        others = ''.join(f'<a class="chip" href="/runy/{t["slug"]}/"><b>{t["sym"]}</b> {t["name"]}</a>' for t in RUNES if t is not r) + '<a class="chip" href="/runy/odin/">Пустая руна (руна Одина)</a>'
         body = f"""{breadcrumbs(cr)}
 <article class="entry">
   <header class="entry-head">
@@ -585,7 +593,7 @@ def sign_pages():
         url = f"/hiromantiya/{g['slug']}/"
         cr = [("Главная", "/"), ("Хиромантия", "/hiromantiya/"), (g["h1"].split(":")[0], url)]
         secs = ''.join(f'<section class="prose card"><h2>{h}</h2><p>{t}</p></section>' for h, t in g["secs"])
-        others = ''.join(f'<a class="chip" href="/hiromantiya/{o["slug"]}/">{o["name"]}</a>' for o in PALM_MAIN)
+        others = ''.join(f'<a class="chip" href="/hiromantiya/{o["slug"]}/">{o["name"]}</a>' for o in PALM)
         more = ''.join(f'<a class="chip" href="/hiromantiya/{o["slug"]}/">{o["h1"].split(":")[0]}</a>' for o in SIGNS if o is not g)
         body = f"""{breadcrumbs(cr)}
 <article class="entry">
@@ -660,7 +668,7 @@ def palm_pages():
   </div>
   <div class="hub-art">{palm_svg()}</div>
 </section>
-<section><div class="grid tiles g2">{tiles}</div></section>
+<section><h2>Главные линии на руке</h2><div class="grid tiles g2">{tiles}</div></section>
 <section><h2>Второстепенные линии</h2><div class="grid tiles g2">{minor_tiles}</div></section>
 {summary_table("Таблица: линии на руке и их значение", ["Линия", "Где находится", "Что показывает"], [(f'<a href="/hiromantiya/{p["slug"]}/">{p["name"]}</a>', first_sentence(p["where"]), PALM_SHOWS[p["slug"]]) for p in PALM])}
 <section><h2>Знаки и особенности линий</h2><div class="chips">{''.join(f'<a class="chip" href="/hiromantiya/{o["slug"]}/">{o["h1"].split(":")[0]}</a>' for o in SIGNS)}</div></section>
@@ -695,7 +703,7 @@ def arkan_page():
     secs = "".join(f'<section class="prose card"><h2>{h}</h2>' + "".join(f"<p>{x}</p>" for x in t.split("\n\n")) + (f'<p><a class="btn btn-gold btn-sm" href="{bot("seo_taro_arkan_compat")}">👩‍❤️‍👨 Проверить совместимость в боте</a></p>' if h.startswith("Совместимость") else "") + "</section>" for h, t in data_arkan.SECTIONS)
     qa = data_arkan.FAQ
     h1 = "Аркан по дате рождения: рассчитать онлайн бесплатно"
-    desc = "Рассчитать аркан по дате рождения онлайн бесплатно: аркан личности и аркан судьбы, значение всех 22 старших арканов, как посчитать вручную и совместимость по арканам."
+    desc = "Рассчитать аркан по дате рождения онлайн бесплатно: аркан личности и аркан судьбы, значение 22 старших арканов, расчёт вручную и совместимость."
     body = f"""{breadcrumbs(cr)}
 <section class="hub-head">
   <div class="eyebrow">Таро · калькулятор · бесплатно</div>
@@ -771,7 +779,7 @@ def compat_page():
     persons = "".join(f"<li><b>{n}</b> — {t}</li>" for n, t in data_compat.PERSON.items())
     qa = data_compat.FAQ
     h1 = "Совместимость по дате рождения: рассчитать онлайн бесплатно"
-    desc = "Рассчитать совместимость по дате рождения онлайн бесплатно: число судьбы каждого партнёра, число пары и расшифровка союза. Как посчитать вручную и какие числа подходят друг другу."
+    desc = "Рассчитать совместимость по дате рождения онлайн бесплатно: число судьбы каждого партнёра, число пары и расшифровка союза. Как посчитать вручную."
     body = f"""{breadcrumbs(cr)}
 <section class="hub-head">
   <div class="eyebrow">Нумерология · калькулятор · бесплатно</div>
@@ -828,7 +836,7 @@ def home():
       <a class="btn btn-ghost" href="{CHANNEL}">Канал с картой дня</a>
       <a class="btn btn-ghost" href="{VK}">Мы ВКонтакте</a>
     </div>
-    <p class="note">Без регистрации и приложений — всё внутри Telegram.</p>
+    <p class="note">Без установки приложений — всё внутри Telegram.</p>
   </div>
   <div class="palm">{palm_svg()}</div>
 </section>
@@ -870,7 +878,7 @@ def home():
 <section>
   <div class="sec-head"><div class="eyebrow">Справочник</div><h2>Значения карт Таро и рун</h2>
   <p>Толкования всех 78 карт Таро и 24 рун Старшего Футарка: прямое и перевёрнутое положение, любовь, работа, совет.</p></div>
-  <div class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет</a><a class="chip" href="/runy/runa-dnya/">ᚠ Руна дня</a></div>
+  <div class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет</a><a class="chip" href="/runy/runa-dnya/">ᚠ Руна дня</a><a class="chip" href="/taro/arkan-po-date-rozhdeniya/">🔢 Аркан по дате рождения</a><a class="chip" href="/sovmestimost-po-date-rozhdeniya/">👩‍❤️‍👨 Совместимость по дате рождения</a></div>
   <h3 class="sub">Карты Таро</h3><div class="chips">{tarot_chips}<a class="chip" href="/taro/zhezly/">Масть Жезлов</a><a class="chip" href="/taro/kubki/">Масть Кубков</a><a class="chip" href="/taro/mechi/">Масть Мечей</a><a class="chip" href="/taro/pentakli/">Масть Пентаклей</a><a class="chip more" href="/taro/">Все 78 карт →</a></div>
   <h3 class="sub">Руны</h3><div class="chips">{rune_chips}<a class="chip more" href="/runy/">Все руны →</a></div>
 </section>
@@ -1105,6 +1113,7 @@ def about():
   <h1>MyLineLife — гадание по ладони, Таро и руны в Telegram</h1>
   <p class="lead">MyLineLife — развлекательный проект о хиромантии, Таро и рунах. Он состоит из Telegram-бота @mylinelife_bot, канала с ежедневной картой @mylinelife_daily и этого сайта-справочника.</p>
 </section>
+<h2>Из чего состоит MyLineLife</h2>
 <div class="grid g3">
   <div class="card"><h3>Бот</h3><p>Разбор ладони по фото, расклады Таро на свой вопрос и руны. Карта дня и руна дня — бесплатно.</p><p><a href="{bot('site_about')}">Открыть бота →</a></p></div>
   <div class="card"><h3>Канал</h3><p>Каждое утро — карта Таро, руна и гороскоп для всех знаков зодиака.</p><p><a href="{CHANNEL}">Подписаться →</a> · <a href="{VK}">Группа ВКонтакте →</a> · <a href="{PINTEREST}">Pinterest →</a></p></div>

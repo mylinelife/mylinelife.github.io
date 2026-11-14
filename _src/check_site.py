@@ -16,6 +16,9 @@ MIN_WORDS = {
     **{f"runy/{s}": 850 for s in ("mannaz", "hagalaz", "dagaz", "nautiz")},
     "hiromantiya/liniya-braka": 750,
     "sovmestimost-po-date-rozhdeniya": 1000,
+    # аудит 14.11.2026: ключевые страницы хиромантии и хабы мастей
+    "hiromantiya/liniya-golovy": 800, "hiromantiya/liniya-sudby": 800,
+    **{f"taro/{x}": 700 for x in ("zhezly", "kubki", "mechi", "pentakli")},
 }
 # страницы, правленные после 24.10: lastmod в sitemap должен быть новее общего
 MODIFIED_AFTER_BASE = list(MIN_WORDS) + ["hiromantiya/liniya-serdca", "hiromantiya/liniya-zhizni", "runy/odin"]
@@ -23,6 +26,10 @@ MODIFIED_AFTER_BASE = list(MIN_WORDS) + ["hiromantiya/liniya-serdca", "hiromanti
 
 sys.path.insert(0, os.path.dirname(__file__))
 from bot_links import check_start  # noqa: E402
+
+
+# инструменты, на которые должна вести каждая страница (подвал) и контент главной
+TOOLS = ["/taro/karta-dnya/", "/runy/runa-dnya/", "/taro/da-ili-net/", "/taro/arkan-po-date-rozhdeniya/", "/sovmestimost-po-date-rozhdeniya/"]
 
 
 def text_of(h):
@@ -59,6 +66,25 @@ def main():
             errs.append(f"{name}: title пустой или повторяется ({titles.get(t.group(1)) if t else ''})")
         elif t:
             titles[t.group(1)] = name
+        if t and len(t.group(1)) > 70:
+            errs.append(f"{name}: title {len(t.group(1))} симв. (макс. 70)")
+        d = re.search(r'<meta name="description" content="([^"]*)"', h)
+        if not d or not 70 <= len(d.group(1)) <= 160:
+            errs.append(f"{name}: description {len(d.group(1)) if d else 0} симв. (нужно 70–160)")
+        indexable = "noindex" not in (re.search(r'<meta name="robots" content="([^"]*)"', h) or [0, ""])[1]
+        if indexable and "max-image-preview:large" not in h:
+            errs.append(f"{name}: нет max-image-preview:large в meta robots")
+        mainh = (re.search(r"<main[^>]*>(.*?)</main>", h, re.S) or [0, h])[1]
+        lv = [int(x) for x in re.findall(r"<h([1-6])[ >]", mainh)]
+        if any(b - a > 1 for a, b in zip(lv, lv[1:])):
+            errs.append(f"{name}: пропуск уровня заголовков {lv[:6]}")
+        for tool in TOOLS:
+            if indexable and f'href="{tool}"' not in h and name.strip("/") != tool.strip("/"):
+                errs.append(f"{name}: нет ссылки на инструмент {tool}")
+        if name == "/":
+            for tool in TOOLS:
+                if f'href="{tool}"' not in mainh:
+                    errs.append(f"/: в контенте главной нет ссылки на {tool}")
         h2 = re.findall(r"<h2[^>]*>(.*?)</h2>", h, re.S)
         for d in {x for x in h2 if h2.count(x) > 1}:
             errs.append(f"{name}: повтор H2 «{d}»")
