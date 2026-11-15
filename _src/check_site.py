@@ -19,6 +19,8 @@ MIN_WORDS = {
     # аудит 14.11.2026: ключевые страницы хиромантии и хабы мастей
     "hiromantiya/liniya-golovy": 800, "hiromantiya/liniya-sudby": 800,
     **{f"taro/{x}": 700 for x in ("zhezly", "kubki", "mechi", "pentakli")},
+    # 15.11.2026: самые тонкие карты Пентаклей (были ~350 слов)
+    **{f"taro/{s}-pentakley": 750 for s in ("troyka", "semerka", "vosmerka", "devyatka", "desyatka", "pazh", "korol")},
 }
 # страницы, правленные после 24.10: lastmod в sitemap должен быть новее общего
 MODIFIED_AFTER_BASE = list(MIN_WORDS) + ["hiromantiya/liniya-serdca", "hiromantiya/liniya-zhizni", "runy/odin"]
