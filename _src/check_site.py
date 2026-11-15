@@ -35,6 +35,55 @@ VARIANT_SVG = {"hiromantiya/liniya-serdca": 6, "hiromantiya/liniya-zhizni": 6}
 TOOLS = ["/taro/karta-dnya/", "/runy/runa-dnya/", "/taro/da-ili-net/", "/taro/arkan-po-date-rozhdeniya/", "/sovmestimost-po-date-rozhdeniya/"]
 
 
+def path_points(d, steps=12):
+    """Точки SVG-пути из команд M/L/C (абсолютные координаты), кривые Безье разбиты на отрезки."""
+    nums = lambda t: [float(x) for x in re.findall(r"-?[\d.]+", t)]
+    pts, cur = [], (0.0, 0.0)
+    for cmd, args in re.findall(r"([MLC])([^MLC]*)", d):
+        a = nums(args)
+        if cmd in "ML":
+            for i in range(0, len(a), 2):
+                cur = (a[i], a[i + 1]); pts.append(cur)
+        else:
+            for i in range(0, len(a), 6):
+                p0, p1, p2, p3 = cur, (a[i], a[i + 1]), (a[i + 2], a[i + 3]), (a[i + 4], a[i + 5])
+                for k in range(1, steps + 1):
+                    t = k / steps; u = 1 - t
+                    pts.append(tuple(u**3 * p0[j] + 3 * u * u * t * p1[j] + 3 * u * t * t * p2[j] + t**3 * p3[j] for j in (0, 1)))
+                cur = p3
+    return pts
+
+
+def inside(pt, poly):
+    x, y, res = pt[0], pt[1], False
+    for (x1, y1), (x2, y2) in zip(poly, poly[1:] + poly[:1]):
+        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+            res = not res
+    return res
+
+
+def near_edge(pt, poly, tol=1.5):
+    """Точка на контуре с допуском: линии вроде линии сердца по задумке доходят до края ладони."""
+    for (x1, y1), (x2, y2) in zip(poly, poly[1:] + poly[:1]):
+        dx, dy = x2 - x1, y2 - y1
+        t = max(0, min(1, ((pt[0] - x1) * dx + (pt[1] - y1) * dy) / (dx * dx + dy * dy or 1)))
+        if (pt[0] - x1 - t * dx) ** 2 + (pt[1] - y1 - t * dy) ** 2 <= tol * tol:
+            return True
+    return False
+
+
+def palm_lines_outside(h):
+    """Линии на схемах ладони, которые выходят за контур руки (первый path в группе — контур)."""
+    bad = []
+    for svg in re.findall(r'<svg class="(?:palm-svg|variant-svg)[^"]*".*?</svg>', h, re.S):
+        ds = re.findall(r'<path d="([^"]+)"', svg)
+        if len(ds) < 2:
+            continue
+        hand = path_points(ds[0])
+        bad += [d[:30] for d in ds[1:] if not all(inside(pt, hand) or near_edge(pt, hand) for pt in path_points(d))]
+    return bad
+
+
 def text_of(h):
     h = re.sub(r"<script.*?</script>|<style.*?</style>", " ", h, flags=re.S)
     return re.sub(r"<[^>]+>", " ", h)
@@ -108,6 +157,8 @@ def main():
             n = len(re.findall(r'<svg class="variant-svg"[^>]*role="img" aria-label="[^"]{10,}"', h))
             if n != VARIANT_SVG[rel]:
                 errs.append(f"{name}: схем вариантов {n}, нужно {VARIANT_SVG[rel]}")
+        for d in set(palm_lines_outside(h)):
+            errs.append(f"{name}: линия на схеме ладони выходит за контур ({d}…)")
         need = MIN_WORDS.get(rel)
         if need:
             n = len(text_of(h).split())
