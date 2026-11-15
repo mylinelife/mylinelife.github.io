@@ -28,6 +28,9 @@ sys.path.insert(0, os.path.dirname(__file__))
 from bot_links import check_start  # noqa: E402
 
 
+# страницы хиромантии, где у каждого варианта линии своя схема ладони
+VARIANT_SVG = {"hiromantiya/liniya-serdca": 6, "hiromantiya/liniya-zhizni": 6}
+
 # инструменты, на которые должна вести каждая страница (подвал) и контент главной
 TOOLS = ["/taro/karta-dnya/", "/runy/runa-dnya/", "/taro/da-ili-net/", "/taro/arkan-po-date-rozhdeniya/", "/sovmestimost-po-date-rozhdeniya/"]
 
@@ -101,6 +104,10 @@ def main():
             e = check_start(pl)
             if e:
                 errs.append(f"{name}: ссылка на бота start={pl}: {e}")
+        if rel in VARIANT_SVG:
+            n = len(re.findall(r'<svg class="variant-svg"[^>]*role="img" aria-label="[^"]{10,}"', h))
+            if n != VARIANT_SVG[rel]:
+                errs.append(f"{name}: схем вариантов {n}, нужно {VARIANT_SVG[rel]}")
         need = MIN_WORDS.get(rel)
         if need:
             n = len(text_of(h).split())

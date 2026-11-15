@@ -48,6 +48,9 @@ for _s in WORK:
 PALM_ALIAS = {"liniya-serdca": "линия любви", "liniya-golovy": "линия ума"}
 for _s in PALM_ALIAS:
     MODIFIED[f"/hiromantiya/{_s}/"] = "2026-11-08"
+# 15.11.2026: схемы ладони для каждого варианта линии
+for _s in ("liniya-serdca", "liniya-zhizni"):
+    MODIFIED[f"/hiromantiya/{_s}/"] = "2026-11-15"
 
 
 def mod_iso(url):
@@ -277,6 +280,39 @@ PALM_SVG_PATHS = {
     "liniya-sudby": '<path d="M100.67 189.82 C102.38 168.16 104.09 142.51 106.37 115.72" />',
     "liniya-braka": '<path d="M125.75 119.71 C122.33 119.14 118.91 119.14 115.49 119.71" />',
 }
+# Схемы вариантов линии: (подпись для screen reader, список path d). Порядок = порядок variants в data_palm.
+PALM_VARIANT_PATHS = {
+    # линия жизни: от края ладони между большим и указательным пальцами вокруг бугра большого пальца
+    "liniya-zhizni": [
+        ("длинная глубокая линия жизни огибает бугор большого пальца до запястья", ["M70 131 C84 140 90 160 82 189"], "4", None),
+        ("короткая линия жизни заканчивается на середине ладони", ["M70 131 C80 137 85 146 86 156"], None, (86, 156)),
+        ("линия жизни идёт широкой дугой к центру ладони", ["M70 131 C94 140 102 166 90 190"], None, None),
+        ("линия жизни прижата к большому пальцу узкой дугой", ["M70 131 C75 145 77 166 78 189"], None, None),
+        ("линия жизни с разрывом посередине", ["M70 131 C82 138 87 149 87.6 157", "M87.4 165 C87 175 85 182 82 189"], None, None),
+        ("линия жизни раздваивается внизу у запястья", ["M70 131 C84 140 89 158 86 175", "M86 175 C85 181 83 186 80 189", "M86 175 C89 180 92 185 95 189"], None, None),
+    ],
+    # линия сердца: от ребра ладони под мизинцем к пальцам
+    "liniya-serdca": [
+        ("линия сердца заканчивается под указательным пальцем", ["M125.18 130.54 C106 124 84 124 73 110"], None, (73, 110)),
+        ("линия сердца заканчивается под средним пальцем", ["M125.18 130.54 C110 126 95 122 90 108"], None, (90, 108)),
+        ("линия сердца заканчивается между указательным и средним пальцами", ["M125.18 130.54 C108 125 88 123 81.6 107"], None, (81.6, 107)),
+        ("линия сердца изогнута вверх к основанию пальцев", ["M125.18 130.54 C112 134 92 128 80 109"], None, None),
+        ("прямая линия сердца пересекает ладонь", ["M125.18 130.54 L70 127"], None, None),
+        ("линия сердца раздваивается в конце", ["M125.18 130.54 C112 125 98 122 88 120", "M88 120 C82 118 77 116 74 111", "M88 120 C89 117 90 113 90 109"], None, None),
+    ],
+}
+
+
+def variant_svg(slug, i):
+    label, ds, w, dot = PALM_VARIANT_PATHS[slug][i]
+    col, sw = PALM_COLORS[slug], w or "3"
+    paths = "".join(f'<path d="{d}" stroke="{col}" stroke-width="{sw}" stroke-linecap="round"/>' for d in ds)
+    if dot:  # точка в конце линии: где она заканчивается, видно и на маленькой схеме
+        paths += f'<circle cx="{dot[0]}" cy="{dot[1]}" r="2.6" fill="{col}"/>'
+    return (f'<svg class="variant-svg" viewBox="34 40 96 156" width="78" height="127" style="float:right;margin:0 0 6px 12px" fill="none" role="img" aria-label="Схема: {label}">'
+            f'<path d="{PALM_HAND}" stroke="#efe9ff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" opacity=".8"/>{paths}</svg>')
+
+
 PALM_MAIN = [p for p in PALM if not p.get("minor")]
 PALM_MINOR = [p for p in PALM if p.get("minor")]
 MINOR_SLUGS = {p["slug"] for p in PALM_MINOR}
@@ -624,7 +660,9 @@ def palm_pages():
         desc = f"{p['name']} на ладони: где находится и как её читать в хиромантии. Длинная, короткая, прерывистая, раздвоенная — значения с примерами."
         h1 = f"{nm} на руке: где находится и что означает"
         cr = [("Главная", "/"), ("Хиромантия", "/hiromantiya/"), (p["name"], url)]
-        variants = ''.join(f'<section class="card"><h3>{E(v)}</h3><p>{E(t)}</p></section>' for v, t in p["variants"])
+        variants = ''.join(f'<section class="card">'
+                           f'{variant_svg(p["slug"], i) if p["slug"] in PALM_VARIANT_PATHS else ""}<h3>{E(v)}</h3><p>{E(t)}</p></section>'
+                           for i, (v, t) in enumerate(p["variants"]))
         others = ''.join(f'<a class="chip" href="/hiromantiya/{o["slug"]}/">{o["name"]}</a>' for o in PALM if o is not p)
         body = f"""{breadcrumbs(cr)}
 <article class="entry">

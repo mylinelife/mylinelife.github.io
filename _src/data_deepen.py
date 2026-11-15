@@ -152,8 +152,8 @@ DAY_DEEP = {
 
 # Правки после базовой даты 24 октября: url -> дата последнего изменения (ISO)
 MODIFIED = {
-    "/hiromantiya/liniya-serdca/": "2026-11-07",
-    "/hiromantiya/liniya-zhizni/": "2026-11-07",
+    "/hiromantiya/liniya-serdca/": "2026-11-15",
+    "/hiromantiya/liniya-zhizni/": "2026-11-15",
     "/runy/odin/": "2026-11-07",
 }
 for _s in RUNE_DEEP: MODIFIED[f"/runy/{_s}/"] = "2026-11-08"
