@@ -23,6 +23,8 @@ MIN_WORDS = {
     **{f"taro/{s}-pentakley": 750 for s in ("troyka", "semerka", "vosmerka", "devyatka", "desyatka", "pazh", "korol")},
     # 17.11.2026: остальные карты Пентаклей
     **{f"taro/{s}-pentakley": 750 for s in ("tuz", "dvoyka", "chetverka", "pyaterka", "shesterka", "rycar", "koroleva")},
+    # 20.11.2026: самые тонкие карты Мечей
+    **{f"taro/{s}-mechey": 750 for s in ("pazh", "koroleva", "korol", "devyatka", "semerka", "troyka", "chetverka")},
 }
 # страницы, правленные после 24.10: lastmod в sitemap должен быть новее общего
 MODIFIED_AFTER_BASE = list(MIN_WORDS) + ["hiromantiya/liniya-serdca", "hiromantiya/liniya-zhizni", "runy/odin"]
