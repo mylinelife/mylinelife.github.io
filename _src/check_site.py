@@ -113,7 +113,7 @@ def exists(path):
 
 
 def main():
-    errs, titles = [], {}
+    errs, titles, desc_tails = [], {}, {}
     for rel, p in pages():
         h = open(p, encoding="utf8").read()
         name = rel or "/"
@@ -129,6 +129,8 @@ def main():
         d = re.search(r'<meta name="description" content="([^"]*)"', h)
         if not d or not 70 <= len(d.group(1)) <= 160:
             errs.append(f"{name}: description {len(d.group(1)) if d else 0} симв. (нужно 70–160)")
+        if d and ":" in d.group(1):
+            desc_tails.setdefault(d.group(1).split(":", 1)[1].strip()[:60], []).append(name)
         indexable = "noindex" not in (re.search(r'<meta name="robots" content="([^"]*)"', h) or [0, ""])[1]
         if indexable and "max-image-preview:large" not in h:
             errs.append(f"{name}: нет max-image-preview:large в meta robots")
@@ -170,6 +172,9 @@ def main():
             n = len(text_of(h).split())
             if n < need:
                 errs.append(f"{name}: {n} слов, нужно не меньше {need}")
+    for tail, names in desc_tails.items():
+        if len(names) > 2:  # шаблонное описание: отличается только словом до двоеточия
+            errs.append(f"одинаковое описание у {len(names)} страниц ({', '.join(sorted(names)[:3])}…): «{tail}»")
     sm = open(os.path.join(ROOT, "sitemap.xml"), encoding="utf8").read()
     base = re.search(r"<lastmod>(.*?)</lastmod>", sm).group(1)
     for rel in MODIFIED_AFTER_BASE:
