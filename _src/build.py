@@ -234,7 +234,7 @@ def page(url, title, desc, body, graph=(), og_type="article", priority="0.7", fr
     <div><b>Руны</b><a href="/runy/">Значения рун</a><a href="/runy/fehu/">Феху</a><a href="/runy/algiz/">Альгиз</a><a href="/runy/gebo/">Гебо</a><a href="/runy/odin/">Руна Одина</a></div>
     <div><b>Онлайн</b><a href="/taro/karta-dnya/">Карта дня</a><a href="/runy/runa-dnya/">Руна дня</a><a href="/taro/da-ili-net/">Таро да или нет</a><a href="/taro/arkan-po-date-rozhdeniya/">Аркан по дате рождения</a><a href="/sovmestimost-po-date-rozhdeniya/">Совместимость по дате рождения</a></div>
     <div><b>Хиромантия</b><a href="/hiromantiya/">Линии на руке</a>{''.join(f'<a href="/hiromantiya/{p["slug"]}/">{p["name"]}</a>' for p in PALM)}</div>
-    <div><b>MyLineLife</b><a href="{bot('site_footer')}">Бот в Telegram</a><a href="{CHANNEL}">Канал с картой дня</a><a href="{VK}">Группа ВКонтакте</a><a href="{PINTEREST}">Pinterest</a><a href="/o-proekte/">О проекте</a><a href="/privacy.html">Политика конфиденциальности</a></div>
+    <div><b>MyLineLife</b><a href="{bot('site_footer')}">Бот в Telegram</a><a href="{CHANNEL}">Канал с картой дня</a><a href="{VK}">Группа ВКонтакте</a><a href="{PINTEREST}">Pinterest</a><a href="/o-proekte/">О проекте</a><a href="/kontakty/">Контакты</a><a href="/privacy.html">Политика конфиденциальности</a></div>
   </nav>
   <p class="disc">Материалы сайта и бота MyLineLife не являются медицинской, психологической, юридической или финансовой консультацией.</p>
   <p class="disc">© 2026 MyLineLife</p>
@@ -1203,6 +1203,45 @@ def about():
          og_type="website", priority="0.5", freq="yearly")
 
 
+def contacts():
+    url = "/kontakty/"
+    cr = [("Главная", "/"), ("Контакты", url)]
+    body = f"""{breadcrumbs(cr)}
+<article class="prose">
+<section class="hub-head">
+  <div class="eyebrow">Контакты</div>
+  <h1>Контакты MyLineLife</h1>
+  <p class="lead">MyLineLife — независимый проект о хиромантии, Таро и рунах: справочник mylinelife.ru, Telegram-бот @mylinelife_bot и канал @mylinelife_daily. Проект делает Редакция MyLineLife.</p>
+</section>
+<section class="card">
+  <h2>Как с нами связаться</h2>
+  <ul>
+    <li><b>Вопросы, предложения, ошибки на сайте:</b> напишите в Telegram-бот <a href="{bot('site_contacts')}">@mylinelife_bot</a>, отвечаем в течение нескольких дней.</li>
+    <li><b>Запросы о персональных данных:</b> адрес для обращений указан в <a href="/privacy.html">политике конфиденциальности</a>, срок ответа — 10 рабочих дней.</li>
+  </ul>
+</section>
+<section class="card">
+  <h2>Где нас читать</h2>
+  <ul>
+    <li>Telegram-канал с картой недели: <a href="{CHANNEL}">@mylinelife_daily</a></li>
+    <li>ВКонтакте: <a href="{VK}">vk.ru/mylinelife_daily</a></li>
+    <li>Дзен: <a href="https://dzen.ru/id/6ad4d6414cf8164d988038d2">канал MyLineLife</a></li>
+    <li>Teletype: <a href="https://teletype.in/@mylinelife">teletype.in/@mylinelife</a></li>
+    <li>Одноклассники: <a href="https://ok.ru/group/70000061201664">группа MyLineLife</a></li>
+    <li>Pinterest: <a href="{PINTEREST}">mylinelife_bot</a></li>
+  </ul>
+</section>
+<section class="card">
+  <h2>О сайте</h2>
+  <p>Все тексты и схемы написаны и нарисованы для MyLineLife. На сайте нет рекламы, партнёрских ссылок и платного размещения. Подробнее о том, как мы готовим материалы, — на странице <a href="/o-proekte/">О проекте</a>.</p>
+</section>
+</article>"""
+    page(url, "Контакты MyLineLife — как связаться с редакцией",
+         "Контакты проекта MyLineLife: Telegram-бот @mylinelife_bot для вопросов и предложений, канал, ВКонтакте, Дзен, Teletype и Pinterest.",
+         body, [crumbs_ld(cr), {"@type": "ContactPage", "name": "Контакты MyLineLife", "url": SITE + url, "inLanguage": "ru"}],
+         og_type="website", priority="0.4", freq="yearly")
+
+
 def sitemap():
     xs = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u, pr, fr in pages:
@@ -1214,5 +1253,5 @@ def sitemap():
 
 
 if __name__ == "__main__":
-    home(); tarot_pages(); yesno_page(); arkan_page(); compat_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); llm_info_page(); sitemap()
+    home(); tarot_pages(); yesno_page(); arkan_page(); compat_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); contacts(); llm_info_page(); sitemap()
     print(len(pages), "pages")
