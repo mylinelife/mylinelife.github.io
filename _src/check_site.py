@@ -27,6 +27,8 @@ MIN_WORDS = {
     **{f"taro/{s}-mechey": 750 for s in ("pazh", "koroleva", "korol", "devyatka", "semerka", "troyka", "chetverka")},
     # 23.11.2026: самые тонкие карты Кубков
     **{f"taro/{s}-kubkov": 750 for s in ("koroleva", "rycar", "devyatka", "pazh", "korol", "semerka", "desyatka")},
+    # 24.11.2026: сезонная страница к Святкам и Новому году
+    "gadaniya-na-svyatki": 1000,
 }
 # страницы, правленные после 24.10: lastmod в sitemap должен быть новее общего
 MODIFIED_AFTER_BASE = list(MIN_WORDS) + ["hiromantiya/liniya-serdca", "hiromantiya/liniya-zhizni", "runy/odin"]
@@ -177,6 +179,9 @@ def main():
     for tail, names in desc_tails.items():
         if len(names) > 2:  # шаблонное описание: отличается только словом до двоеточия
             errs.append(f"одинаковое описание у {len(names)} страниц ({', '.join(sorted(names)[:3])}…): «{tail}»")
+    for rel in MIN_WORDS:  # страница из списка должна существовать
+        if not os.path.isfile(os.path.join(ROOT, rel, "index.html")):
+            errs.append(f"{rel}: страницы нет")
     sm = open(os.path.join(ROOT, "sitemap.xml"), encoding="utf8").read()
     base = re.search(r"<lastmod>(.*?)</lastmod>", sm).group(1)
     for rel in MODIFIED_AFTER_BASE:

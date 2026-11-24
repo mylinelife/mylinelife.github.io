@@ -776,3 +776,4 @@ CARD_DEEP.update({
 })
 for _s in ("koroleva", "rycar", "devyatka", "pazh", "korol", "semerka", "desyatka"):
     MODIFIED[f"/taro/{_s}-kubkov/"] = "2026-11-23"
+MODIFIED["/gadaniya-na-svyatki/"] = "2026-11-24"

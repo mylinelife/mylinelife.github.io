@@ -453,7 +453,7 @@ def tarot_pages():
   <h1>Значение карт Таро: все 78 карт</h1>
   <p class="lead">Толкования всех карт колоды Таро: 22 старших аркана и 56 младших в четырёх мастях. Для каждой карты — прямое и перевёрнутое положение, любовь, работа, совет и ответ «да или нет».</p>
   <div class="daily" id="daily"></div>
-  <p class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро на сегодня →</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет →</a><a class="chip" href="/taro/arkan-po-date-rozhdeniya/">🔢 Аркан по дате рождения →</a><a class="chip" href="/sovmestimost-po-date-rozhdeniya/">👩‍❤️‍👨 Совместимость по дате рождения →</a></p>
+  <p class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро на сегодня →</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет →</a><a class="chip" href="/gadaniya-na-svyatki/">❄️ Гадания на Святки и Новый год →</a><a class="chip" href="/taro/arkan-po-date-rozhdeniya/">🔢 Аркан по дате рождения →</a><a class="chip" href="/sovmestimost-po-date-rozhdeniya/">👩‍❤️‍👨 Совместимость по дате рождения →</a></p>
 </section>
 <section><h2>Старшие арканы</h2><p class="muted">Большие жизненные темы и этапы</p><div class="grid tiles">{''.join(tile(c, c['num']) for c in TAROT)}</div></section>
 {summary_table('Таблица: значение 22 старших арканов', ['№', 'Карта', 'Ключевые слова', 'Да или нет'], [(c['num'], f'<a href="/taro/{c["slug"]}/">{c["name"]}</a>', ', '.join(c['kw'][:3]), c['yesno']) for c in TAROT])}
@@ -926,7 +926,7 @@ def home():
 <section>
   <div class="sec-head"><div class="eyebrow">Справочник</div><h2>Значения карт Таро и рун</h2>
   <p>Толкования всех 78 карт Таро и 24 рун Старшего Футарка: прямое и перевёрнутое положение, любовь, работа, совет.</p></div>
-  <div class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет</a><a class="chip" href="/runy/runa-dnya/">ᚠ Руна дня</a><a class="chip" href="/taro/arkan-po-date-rozhdeniya/">🔢 Аркан по дате рождения</a><a class="chip" href="/sovmestimost-po-date-rozhdeniya/">👩‍❤️‍👨 Совместимость по дате рождения</a></div>
+  <div class="chips"><a class="chip" href="/taro/karta-dnya/">🎴 Карта дня Таро</a><a class="chip" href="/taro/da-ili-net/">🔮 Таро да или нет</a><a class="chip" href="/gadaniya-na-svyatki/">❄️ Гадания на Святки</a><a class="chip" href="/runy/runa-dnya/">ᚠ Руна дня</a><a class="chip" href="/taro/arkan-po-date-rozhdeniya/">🔢 Аркан по дате рождения</a><a class="chip" href="/sovmestimost-po-date-rozhdeniya/">👩‍❤️‍👨 Совместимость по дате рождения</a></div>
   <h3 class="sub">Карты Таро</h3><div class="chips">{tarot_chips}<a class="chip" href="/taro/zhezly/">Масть Жезлов</a><a class="chip" href="/taro/kubki/">Масть Кубков</a><a class="chip" href="/taro/mechi/">Масть Мечей</a><a class="chip" href="/taro/pentakli/">Масть Пентаклей</a><a class="chip more" href="/taro/">Все 78 карт →</a></div>
   <h3 class="sub">Руны</h3><div class="chips">{rune_chips}<a class="chip more" href="/runy/">Все руны →</a></div>
 </section>
@@ -1242,6 +1242,37 @@ def contacts():
          og_type="website", priority="0.4", freq="yearly")
 
 
+def svyatki_page():
+    """Сезонная страница к Святкам и Новому году (спрос в Яндексе: середина декабря — 19 января)."""
+    import data_svyatki as S
+    url = "/gadaniya-na-svyatki/"
+    cr = [("Главная", "/"), ("Таро", "/taro/"), ("Гадания на Святки", url)]
+    folk = "".join(f'<section class="card"><h3>{E(t)}</h3><p>{E(x)}</p></section>' for t, x in S.FOLK)
+    src = "".join(f'<li>{E(t)} <a href="{u}" rel="noopener" target="_blank">источник</a></li>' for t, u in S.SOURCES)
+    body = f"""{breadcrumbs(cr)}
+<article>
+<section class="hub-head">
+  <div class="eyebrow">Святки · Новый год</div>
+  <h1>Гадания на Святки и Новый год</h1>
+  <p class="lead">{E(S.LEAD)}</p>
+</section>
+{summary_table("Когда гадать: даты Святок 2027", ["Дата", "Что за день", "Чем известен"], S.DATES)}
+<section class="prose card"><h2>Народные святочные гадания</h2><p>Самые известные гадания, которые описывают этнографы. Толкования — народные поверья, в разных деревнях они отличались.</p></section>
+<div class="entry-grid">{folk}</div>
+<section class="prose card"><h2>Расклад Таро на год: 12 месяцев и тема года</h2><p>{S.TAROT_YEAR}</p></section>
+<section class="prose card"><h2>Аркан 2027 года</h2><p>{S.ARKAN_YEAR}</p></section>
+<section class="prose card"><h2>Руна на новый год</h2><p>{S.RUNE_YEAR}</p></section>
+<section class="prose card"><h2>Новогодние традиции и гадания</h2><p>{S.NEW_YEAR}</p></section>
+<section class="prose card"><h2>Как относится к гаданиям церковь</h2><p>{E(S.CHURCH)}</p></section>
+{cta("Расклад Таро в боте MyLineLife", "Вытяните карты на новый год в Telegram-боте: Таро, руны и разбор по дате рождения.", "seo_taro_svyatki")}
+{faq_html(S.FAQ)}
+<section class="prose card"><h2>Источники</h2><ol>{src}</ol></section>
+</article>"""
+    title = "Гадания на Святки и Новый год 2027: даты, способы, Таро"
+    desc = "Гадания на Святки и Новый год 2027: даты Святок, гадание на воске, башмак за ворота и другие народные обычаи, расклад Таро на год, аркан и руна года."
+    page(url, title, desc, body, [crumbs_ld(cr), article_ld(title, desc, url), faq_ld(S.FAQ)], priority="0.8", freq="weekly")
+
+
 def sitemap():
     xs = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u, pr, fr in pages:
@@ -1253,5 +1284,5 @@ def sitemap():
 
 
 if __name__ == "__main__":
-    home(); tarot_pages(); yesno_page(); arkan_page(); compat_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); contacts(); llm_info_page(); sitemap()
+    home(); tarot_pages(); yesno_page(); arkan_page(); compat_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); contacts(); svyatki_page(); llm_info_page(); sitemap()
     print(len(pages), "pages")
