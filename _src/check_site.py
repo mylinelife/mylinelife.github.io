@@ -38,6 +38,13 @@ sys.path.insert(0, os.path.dirname(__file__))
 from bot_links import check_start  # noqa: E402
 
 
+# формулировки реальных запросов из Search Console, на которые страница должна отвечать прямо
+REQUIRED_PHRASES = {
+    "hiromantiya/razdvoennaya-liniya-serdca": ["на правой руке", "на левой руке"],
+    "taro/troyka-zhezlov": ["Тройка Посохов"],
+    "runy/otala": ["Отила"],
+}
+
 # страницы хиромантии, где у каждого варианта линии своя схема ладони
 VARIANT_SVG = {"hiromantiya/liniya-serdca": 6, "hiromantiya/liniya-zhizni": 6}
 
@@ -171,6 +178,9 @@ def main():
                 errs.append(f"{name}: схем вариантов {n}, нужно {VARIANT_SVG[rel]}")
         for d in set(palm_lines_outside(h)):
             errs.append(f"{name}: линия на схеме ладони выходит за контур ({d}…)")
+        for ph in REQUIRED_PHRASES.get(rel, []):
+            if ph.lower() not in text_of(h).lower():
+                errs.append(f"{name}: нет формулировки запроса «{ph}»")
         need = MIN_WORDS.get(rel)
         if need:
             n = len(text_of(h).split())

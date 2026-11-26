@@ -51,6 +51,9 @@ for _s in PALM_ALIAS:
 # 15.11.2026: схемы ладони для каждого варианта линии
 for _s in ("liniya-serdca", "liniya-zhizni"):
     MODIFIED[f"/hiromantiya/{_s}/"] = "2026-11-15"
+# 26.11.2026: ответы на формулировки запросов из Search Console
+for _u in ("/hiromantiya/razdvoennaya-liniya-serdca/", "/taro/troyka-zhezlov/", "/runy/otala/"):
+    MODIFIED[_u] = "2026-11-26"
 
 
 def mod_iso(url):
