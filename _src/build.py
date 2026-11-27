@@ -142,11 +142,15 @@ def faq_ld(qa):
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
 
 
+# страницы, вышедшие позже запуска сайта (24.10.2026): реальная дата публикации
+PUBLISHED = {"/gadaniya-na-svyatki/": "2026-11-24"}
+
+
 def article_ld(title, desc, url):
     return {"@type": "Article", "headline": title, "description": desc, "inLanguage": "ru",
-            "datePublished": TODAY, "dateModified": mod_iso(url), "mainEntityOfPage": SITE + url,
+            "datePublished": PUBLISHED.get(url, TODAY), "dateModified": mod_iso(url), "mainEntityOfPage": SITE + url,
             "image": SITE + "/assets/og.png",
-            "author": {"@type": "Organization", "name": "MyLineLife", "url": SITE + "/"},
+            "author": {"@type": "Organization", "name": "Редакция MyLineLife", "url": SITE + "/o-proekte/"},
             "publisher": {"@type": "Organization", "name": "MyLineLife",
                           "logo": {"@type": "ImageObject", "url": SITE + "/assets/icon-512.png"}}}
 

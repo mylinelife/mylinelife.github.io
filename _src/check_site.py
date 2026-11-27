@@ -38,6 +38,9 @@ sys.path.insert(0, os.path.dirname(__file__))
 from bot_links import check_start  # noqa: E402
 
 
+# страницы, созданные позже запуска сайта: datePublished в разметке должен совпадать с реальной датой
+PUBLISHED_AFTER_LAUNCH = {"gadaniya-na-svyatki": "2026-11-24"}
+
 # формулировки реальных запросов из Search Console, на которые страница должна отвечать прямо
 REQUIRED_PHRASES = {
     "hiromantiya/razdvoennaya-liniya-serdca": ["на правой руке", "на левой руке"],
@@ -181,6 +184,11 @@ def main():
         for ph in REQUIRED_PHRASES.get(rel, []):
             if ph.lower() not in text_of(h).lower():
                 errs.append(f"{name}: нет формулировки запроса «{ph}»")
+        for m in re.finditer(r'"@type": "Article".*?"author": (\{[^}]*\})', h, re.S):
+            if '"Редакция MyLineLife"' not in m.group(1) or "/o-proekte/" not in m.group(1):
+                errs.append(f"{name}: автор в разметке не «Редакция MyLineLife» со ссылкой на /o-proekte/")
+        if rel in PUBLISHED_AFTER_LAUNCH and f'"datePublished": "{PUBLISHED_AFTER_LAUNCH[rel]}"' not in h:
+            errs.append(f"{name}: datePublished не {PUBLISHED_AFTER_LAUNCH[rel]}")
         need = MIN_WORDS.get(rel)
         if need:
             n = len(text_of(h).split())
