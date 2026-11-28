@@ -1105,7 +1105,7 @@ def day_pages():
 <section><h2>Значения карт дня: старшие арканы</h2><div class="chips">{chips}<a class="chip more" href="/taro/">Все 78 карт →</a></div></section>
 {cta("Карта дня каждое утро", "Подпишись на канал или открой бота: карта дня и руна дня бесплатно каждое утро, а полный расклад на свой вопрос можно сделать в боте MyLineLife.", "seo_taro_karta_dnya", "🎴 Получить карту дня")}
 {faq_html(qa)}
-<p class="muted">Карта дня не заменяет советов специалистов.</p>
+<p class="muted">Карта дня не заменяет советов специалистов. Хотите карту дня на своём сайте? Возьмите <a href="/vidzhet-karta-dnya/">бесплатный виджет</a>.</p>
 <script>
 (function(){{var C={json.dumps(data, ensure_ascii=False)};var el=document.getElementById('kd');if(!el)return;
 function show(){{var d=new Date();var seed=d.getFullYear()*1000+(d.getMonth()+1)*40+d.getDate();var c=C[(seed*7919)%C.length];
@@ -1280,6 +1280,79 @@ def svyatki_page():
     page(url, title, desc, body, [crumbs_ld(cr), article_ld(title, desc, url), faq_ld(S.FAQ)], priority="0.8", freq="weekly")
 
 
+WIDGET_SRC = SITE + "/widget/karta-dnya.html"
+
+
+def widget_files():
+    """Виджет «Карта дня» для чужих сайтов: отдельный лёгкий HTML без счётчика и без индексации.
+    Карта выбирается той же формулой, что на /taro/karta-dnya/, поэтому она одна для всех в течение суток."""
+    data = [{"s": c["slug"], "n": c["name"], "k": c["kw"][:3], "a": c["advice"]} for c in TAROT + MINOR]
+    utm = "?utm_source=widget&utm_medium=karta_dnya"
+    html = f"""<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, follow"><title>Карта дня Таро — виджет MyLineLife</title>
+<style>
+*{{box-sizing:border-box}}html,body{{margin:0;background:transparent;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}}
+.w{{max-width:420px;margin:0 auto;padding:16px 18px;border-radius:14px;background:linear-gradient(160deg,#241a3f,#15102a);color:#efe9ff;border:1px solid #3a2f63}}
+.e{{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#e7c46b;margin:0 0 6px}}
+h2{{margin:0 0 6px;font:600 21px/1.2 Georgia,serif}}h2 a{{color:#fff;text-decoration:none}}
+.k{{color:#c9bfe6;font-size:13px;margin:0 0 8px}}p{{margin:0 0 10px}}
+.f{{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#c9bfe6}}.f a{{color:#e7c46b}}
+</style></head><body>
+<div class="w" id="w"><p class="e">Карта дня Таро</p><h2>Загрузка…</h2></div>
+<script>
+(function(){{var C={json.dumps(data, ensure_ascii=False)};var d=new Date();
+var seed=d.getFullYear()*1000+(d.getMonth()+1)*40+d.getDate();var c=C[(seed*7919)%C.length];
+var u='{SITE}/taro/'+c.s+'/{utm}';
+document.getElementById('w').innerHTML='<p class="e">Карта дня · '+d.toLocaleDateString('ru-RU',{{day:'numeric',month:'long'}})+'</p>'+
+'<h2><a href="'+u+'" target="_blank" rel="noopener">'+c.n+'</a></h2><p class="k">'+c.k.join(' · ')+'</p><p>'+c.a+'</p>'+
+'<div class="f"><a href="'+u+'" target="_blank" rel="noopener">Полное значение →</a><a href="{SITE}/taro/karta-dnya/{utm}" target="_blank" rel="noopener">MyLineLife</a></div>';
+}})();
+</script></body></html>"""
+    os.makedirs(os.path.join(ROOT, "widget"), exist_ok=True)
+    open(os.path.join(ROOT, "widget", "karta-dnya.html"), "w", encoding="utf8").write(html)
+
+
+def widget_page():
+    """Страница с бесплатным виджетом и кодом вставки."""
+    url = "/vidzhet-karta-dnya/"
+    cr = [("Главная", "/"), ("Карта дня", "/taro/karta-dnya/"), ("Виджет для сайта", url)]
+    code = (f'<iframe src="{WIDGET_SRC}" width="100%" height="230" style="border:0;max-width:420px" '
+            f'loading="lazy" title="Карта дня Таро"></iframe>\n'
+            f'<p style="max-width:420px;font-size:13px">Карта дня Таро от <a href="{SITE}/taro/karta-dnya/">MyLineLife</a></p>')
+    qa = [("Виджет бесплатный?", "Да, полностью бесплатный и без регистрации. Мы просим только оставить под ним подпись со ссылкой на MyLineLife."),
+          ("Карта меняется сама?", "Да, каждый день в полночь по времени посетителя. В течение суток все видят одну и ту же карту — ту же, что на странице «Карта дня»."),
+          ("Виджет собирает данные посетителей моего сайта?", "Нет. В виджете нет счётчиков, рекламы и cookie, он только показывает карту и ссылки на её значение."),
+          ("Можно поменять размер?", "Да. Ширина подстраивается под блок, в котором стоит виджет (до 420 пикселей). Высоту можно менять параметром height, обычно хватает 250–300."),
+          ("Куда можно вставить виджет?", "На любой сайт или блог, где можно добавить HTML-код с iframe: самописный сайт, WordPress, Tilda, конструкторы сайтов и личные страницы.")]
+    body = f"""{breadcrumbs(cr)}
+<article>
+<section class="hub-head">
+  <div class="eyebrow">Бесплатно · для сайтов и блогов</div>
+  <h1>Виджет «Карта дня Таро» для сайта</h1>
+  <p class="lead">Бесплатный виджет с картой дня Таро для вашего сайта или блога. Каждый день он сам показывает новую карту из 78: название, ключевые слова и совет дня, а по клику открывает полное значение карты.</p>
+</section>
+<section class="card prose"><h2>Как выглядит виджет</h2>
+<iframe src="/widget/karta-dnya.html" width="100%" height="230" style="border:0;max-width:420px" loading="lazy" title="Карта дня Таро"></iframe>
+<p>Карта одна для всех в течение суток и совпадает с картой на странице <a href="/taro/karta-dnya/">«Карта дня Таро»</a>. Значения всех карт описаны в <a href="/taro/">справочнике Таро</a>.</p></section>
+<section class="card prose"><h2>Код для вставки</h2>
+<p>Скопируйте код и вставьте его в HTML вашей страницы там, где должен быть виджет:</p>
+<pre id="wcode" style="white-space:pre-wrap;word-break:break-all;font-size:13px;background:rgba(0,0,0,.25);padding:12px;border-radius:10px"><code>{E(code)}</code></pre>
+<p><button class="btn" type="button" id="wcopy">Скопировать код</button></p>
+<script>document.getElementById('wcopy').addEventListener('click',function(){{var b=this;navigator.clipboard.writeText(document.getElementById('wcode').innerText).then(function(){{b.textContent='Скопировано ✓'}})}});</script>
+<p>Подпись со ссылкой на MyLineLife — единственное условие. Спасибо, что оставляете её: так мы можем делать виджет бесплатным.</p></section>
+<section class="card prose"><h2>Как установить</h2>
+<p><b>Обычный сайт.</b> Вставьте код в HTML-шаблон страницы, например в боковую колонку или под статьёй.</p>
+<p><b>WordPress.</b> Добавьте на страницу или в виджеты блок «Произвольный HTML» и вставьте в него код.</p>
+<p><b>Tilda.</b> Добавьте блок «HTML-код» (раздел «Другое») и вставьте код в его содержимое.</p>
+<p><b>Другие конструкторы.</b> Ищите блок «HTML», «Embed» или «Вставка кода». Если конструктор не разрешает iframe, виджет на нём не заработает.</p></section>
+{faq_html(qa)}
+</article>"""
+    title = "Виджет «Карта дня Таро» для сайта — бесплатно, MyLineLife"
+    desc = "Бесплатный виджет «Карта дня Таро» для сайта или блога: новая карта каждый день, совет дня и ссылка на значение. Код вставки и инструкция для WordPress и Tilda."
+    page(url, title, desc, body, [crumbs_ld(cr), article_ld(title, desc, url), faq_ld(qa)], priority="0.5", freq="monthly")
+
+
 def sitemap():
     xs = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u, pr, fr in pages:
@@ -1291,5 +1364,5 @@ def sitemap():
 
 
 if __name__ == "__main__":
-    home(); tarot_pages(); yesno_page(); arkan_page(); compat_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); contacts(); svyatki_page(); llm_info_page(); sitemap()
+    home(); tarot_pages(); yesno_page(); arkan_page(); compat_page(); rune_pages(); day_pages(); palm_pages(); sign_pages(); notfound(); privacy(); about(); contacts(); svyatki_page(); widget_files(); widget_page(); llm_info_page(); sitemap()
     print(len(pages), "pages")

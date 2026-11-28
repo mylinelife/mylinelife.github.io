@@ -29,6 +29,8 @@ MIN_WORDS = {
     **{f"taro/{s}-kubkov": 750 for s in ("koroleva", "rycar", "devyatka", "pazh", "korol", "semerka", "desyatka")},
     # 24.11.2026: сезонная страница к Святкам и Новому году
     "gadaniya-na-svyatki": 1000,
+    # 28.11.2026: страница бесплатного виджета «Карта дня»
+    "vidzhet-karta-dnya": 400,
 }
 # страницы, правленные после 24.10: lastmod в sitemap должен быть новее общего
 MODIFIED_AFTER_BASE = list(MIN_WORDS) + ["hiromantiya/liniya-serdca", "hiromantiya/liniya-zhizni", "runy/odin"]
@@ -46,6 +48,8 @@ REQUIRED_PHRASES = {
     "hiromantiya/razdvoennaya-liniya-serdca": ["на правой руке", "на левой руке"],
     "taro/troyka-zhezlov": ["Тройка Посохов"],
     "runy/otala": ["Отила"],
+    # код вставки виджета: iframe с нашего сайта и видимая ссылка-подпись
+    "vidzhet-karta-dnya": ["https://mylinelife.ru/widget/karta-dnya.html", "https://mylinelife.ru/taro/karta-dnya/"],
 }
 
 # страницы хиромантии, где у каждого варианта линии своя схема ладони
@@ -200,6 +204,13 @@ def main():
     for rel in MIN_WORDS:  # страница из списка должна существовать
         if not os.path.isfile(os.path.join(ROOT, rel, "index.html")):
             errs.append(f"{rel}: страницы нет")
+    w = os.path.join(ROOT, "widget", "karta-dnya.html")  # виджет для чужих сайтов: без счётчика, не в индексе
+    if not os.path.isfile(w):
+        errs.append("widget/karta-dnya.html: файла нет")
+    else:
+        wh = open(w, encoding="utf8").read()
+        if "noindex" not in wh or "mc.yandex" in wh or "metrika" in wh.lower():
+            errs.append("widget/karta-dnya.html: нужен noindex и нельзя подключать Метрику")
     sm = open(os.path.join(ROOT, "sitemap.xml"), encoding="utf8").read()
     base = re.search(r"<lastmod>(.*?)</lastmod>", sm).group(1)
     for rel in MODIFIED_AFTER_BASE:
